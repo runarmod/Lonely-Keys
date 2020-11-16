@@ -6,10 +6,8 @@ function Player:load()
     self.direction = 1
     self.state = "jump"
 
-    self.x = 100
-    self.y = 0
-    self.width = 70
-    self.height = 90
+    self.x = Map.layers.start.objects[1].x
+    self.y = Map.layers.start.objects[1].y
     self.dx = 0
     self.dy = 0
     self.maxSpeed = 300
@@ -26,6 +24,8 @@ function Player:load()
     -- we start midair, so we only have 1 jump remaining
     self.maxJumps = 2
     self.currentJumps = 1
+
+    self.coins = 0
 
     self:loadAssets()
 
@@ -87,23 +87,21 @@ function Player:loadAssets()
         self.animation.duck.img[i] = love.graphics.newImage("assets/Player/p" .. self.character .. "_duck.png")
     end
 
-    self.animation.draw = self.animation[self.state].img[1]
+    self.animation.draw = self.animation.idle.img[1]
     self.animation.width = self.animation.draw:getWidth()
     self.animation.height = self.animation.draw:getHeight()
 
 end
 
 function Player:update(dt)
-    Map.camX = math.max(0, math.min(self.x - love.graphics.getWidth() / 2,
-                   math.min(Map.tilewidth * Map.width - love.graphics.getWidth(), self.x)))
-    Map.camY = math.max(0, math.min(self.y - love.graphics.getHeight() / 2,
-                   math.min(Map.tileheight * Map.height - love.graphics.getHeight(), self.y)))
-
+    -- update width and height of player
     self.animation.width = self.animation.draw:getWidth()
     self.animation.height = self.animation.draw:getHeight()
 
+    self:updateCamera()
     self:setState()
     self:setDirection()
+    self:checkPosition()
     self:animate(dt)
     self:syncPhysics()
     self:move(dt)
@@ -111,11 +109,19 @@ function Player:update(dt)
     
 end
 
+function Player:updateCamera()
+    -- update cam-position
+    Map.camX = math.max(0, math.min(self.x - love.graphics.getWidth() / 2,
+                   math.min(Map.tilewidth * Map.width - love.graphics.getWidth(), self.x)))
+    Map.camY = math.max(0, math.min(self.y - love.graphics.getHeight() / 2,
+                   math.min(Map.tileheight * Map.height - love.graphics.getHeight(), self.y + self.animation.height / 2)))
+end
+
 function Player:setState()
-    if love.keyboard.isDown("c", "lshift") then
-        self.state = "duck"
-    elseif not self.grounded then
+    if not self.grounded then
         self.state = "jump"
+    elseif love.keyboard.isDown("c", "lshift") then
+        self.state = "duck"
     elseif self.dx == 0 then
         self.state = "idle"
     else
@@ -128,6 +134,27 @@ function Player:setDirection()
         self.direction = 1
     elseif self.dx < 0 then
         self.direction = -1
+    end
+end
+
+function Player:checkPosition()
+    local caveEntrance = Map.layers.caveEntrance.objects[1]
+    local caveExit = Map.layers.caveExit.objects[1]
+
+    if Player:inside(caveEntrance.x, caveEntrance.y, caveEntrance.width, caveEntrance.height) then
+        Map.layers.caveHide.visible = false
+    end
+
+    if Player:inside(caveExit.x, caveExit.y, caveExit.width, caveExit.height) then
+        Map.layers.caveHide.visible = true
+    end
+end
+
+function Player:inside(x, y, width, height)
+    if self.x >= x and self.x <= x + width then
+        if self.y >= y and self.y <= y + height then
+            return true
+        end
     end
 end
 
@@ -225,11 +252,15 @@ function Player:land(collision)
 end
 
 function Player:jump(key)
-    if (key == "up" or key == "w" or key == "space") and self.currentJumps < self.maxJumps then
+    if (key == "up" or key == "w" or key == "space") and self.currentJumps < self.maxJumps  then
         self.dy = -(self.jumpVel * (1 - self.currentJumps * 0.2))
         self.grounded = false
         self.currentJumps = self.currentJumps + 1
     end
+end
+
+function Player:incrementCoins()
+    self.coins = self.coins + 10
 end
 
 function Player:endContact(firstBody, secondBody, collision)
@@ -245,5 +276,5 @@ end
 function Player:draw()
     love.graphics.draw(self.animation.draw, self.x, self.y, 0, self.direction, 1, self.animation.width / 2,
         self.animation.height / 2)
-    print(self.animation.width, self.animation.height)
+    print(self.coins)
 end

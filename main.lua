@@ -1,5 +1,6 @@
 local STI = require("sti")
 require("player")
+require("coin")
 
 function love.load()
     Map = STI("map/1.lua", {"box2d"})
@@ -9,6 +10,8 @@ function love.load()
 
     Map.layers.solid.visible = false
     Map.layers.deadly.visible = false
+    Map.layers.caveEntrance.visible = false
+    Map.layers.caveExit.visible = false
 
     -- prevent anti-aliasing
     love.graphics.setDefaultFilter("nearest", "nearest")
@@ -24,12 +27,15 @@ function love.load()
     mountains.one.position, mountains.two.position = 0, 0
 
     Player:load()
+
+    Coin.addAllCoins()
 end
 
 function love.update(dt)
     World:update(dt)
     Map:update(dt)
     Player:update(dt)
+    Coin.updateAll(dt)
 
     mountains.one.position = -(Map.camX * 0.25 - love.graphics.getWidth() / 4) % love.graphics.getWidth()
     mountains.two.position = -(Map.camX * 0.5 - love.graphics.getWidth() / 4) % love.graphics.getWidth()
@@ -88,6 +94,7 @@ function love.draw()
     -- love.graphics.scale(1, 1)
 
     Player:draw()
+    Coin.drawAll()
 
     -- love.graphics.pop()
     love.graphics.print("FPS: " .. love.timer.getFPS(), Map.camX + 10, Map.camY + 20)
@@ -95,6 +102,7 @@ function love.draw()
 end
 
 function beginContact(firstBody, secondBody, collision)
+    if Coin.beginContact(firstBody, secondBody, collision) then return end
     Player:beginContact(firstBody, secondBody, collision)
 end
 
