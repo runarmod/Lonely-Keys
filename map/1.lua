@@ -9,7 +9,7 @@ return {
   tilewidth = 70,
   tileheight = 70,
   nextlayerid = 13,
-  nextobjectid = 85,
+  nextobjectid = 88,
   properties = {},
   tilesets = {
     {
@@ -707,7 +707,21 @@ return {
       offsetx = 0,
       offsety = 0,
       properties = {},
-      objects = {}
+      objects = {
+        {
+          id = 87,
+          name = "",
+          type = "",
+          shape = "rectangle",
+          x = 840,
+          y = 2030,
+          width = 700,
+          height = 140,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        }
+      }
     },
     {
       type = "objectgroup",

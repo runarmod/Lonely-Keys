@@ -106,15 +106,15 @@ function Player:update(dt)
     self:syncPhysics()
     self:move(dt)
     self:applyGravity(dt)
-    
+    self:checkDead(dt)
 end
 
 function Player:updateCamera()
     -- update cam-position
     Map.camX = math.max(0, math.min(self.x - love.graphics.getWidth() / 2,
                    math.min(Map.tilewidth * Map.width - love.graphics.getWidth(), self.x)))
-    Map.camY = math.max(0, math.min(self.y - love.graphics.getHeight() / 2,
-                   math.min(Map.tileheight * Map.height - love.graphics.getHeight(), self.y + self.animation.height / 2)))
+    Map.camY = math.max(0, math.min(self.y - love.graphics.getHeight() / 2, math.min(
+                   Map.tileheight * Map.height - love.graphics.getHeight(), self.y + self.animation.height / 2)))
 end
 
 function Player:setState()
@@ -141,18 +141,24 @@ function Player:checkPosition()
     local caveEntrance = Map.layers.caveEntrance.objects[1]
     local caveExit = Map.layers.caveExit.objects[1]
 
-    if Player:inside(caveEntrance.x, caveEntrance.y, caveEntrance.width, caveEntrance.height) then
-        Map.layers.caveHide.visible = false
+    for i, rectangleObject in ipairs(Map.layers.caveEntrance.objects) do
+        if Player:inside(caveEntrance) then
+            Map.layers.caveHide.visible = false
+            break
+        end
     end
 
-    if Player:inside(caveExit.x, caveExit.y, caveExit.width, caveExit.height) then
-        Map.layers.caveHide.visible = true
+    for i, rectangleObject in ipairs(Map.layers.caveExit.objects) do
+        if Player:inside(caveExit) then
+            Map.layers.caveHide.visible = true
+            break
+        end
     end
 end
 
-function Player:inside(x, y, width, height)
-    if self.x >= x and self.x <= x + width then
-        if self.y >= y and self.y <= y + height then
+function Player:inside(rectangleObject)
+    if self.x >= rectangleObject.x and self.x <= rectangleObject.x + rectangleObject.width then
+        if self.y >= rectangleObject.y and self.y <= rectangleObject.y + rectangleObject.height then
             return true
         end
     end
@@ -222,6 +228,14 @@ function Player:applyGravity(dt)
     end
 end
 
+function Player:checkDead(dt)
+    for i, rectangle in ipairs(Map.layers.deadly.objects) do
+        if Player:inside(rectangle) then
+            love.load()
+        end
+    end
+end
+
 function Player:beginContact(firstBody, secondBody, collision)
     -- don't need to continue if we are already on the ground
     if self.grounded then
@@ -252,7 +266,7 @@ function Player:land(collision)
 end
 
 function Player:jump(key)
-    if (key == "up" or key == "w" or key == "space") and self.currentJumps < self.maxJumps  then
+    if (key == "up" or key == "w" or key == "space") and self.currentJumps < self.maxJumps then
         self.dy = -(self.jumpVel * (1 - self.currentJumps * 0.2))
         self.grounded = false
         self.currentJumps = self.currentJumps + 1
