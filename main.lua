@@ -29,7 +29,7 @@ function love.load()
 
     Player:load()
 
-    Coin.addAllCoins()
+    Coin.addAllCoinsAndRemovePrevious()
 
     HUD:load()
 end

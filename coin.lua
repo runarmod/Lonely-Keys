@@ -45,7 +45,9 @@ function Coin:draw()
     love.graphics.draw(self.img, self.x, self.y, 0, self.scaleX, 1, self.width / 2, self.height / 2)
 end
 
-function Coin.addAllCoins()
+function Coin.addAllCoinsAndRemovePrevious()
+    ActiveCoins = {}
+    
     for i, coinData in ipairs(Map.layers.coins.objects) do
         Coin.new(coinData.x, coinData.y)
     end
