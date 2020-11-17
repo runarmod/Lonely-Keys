@@ -120,7 +120,7 @@ end
 function Player:setState()
     if not self.grounded then
         self.state = "jump"
-    elseif love.keyboard.isDown("c", "lshift") then
+    elseif love.keyboard.isDown("c", "lshift", "s", "down") then
         self.state = "duck"
     elseif self.dx == 0 then
         self.state = "idle"
