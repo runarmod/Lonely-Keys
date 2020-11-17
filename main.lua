@@ -1,6 +1,7 @@
 local STI = require("sti")
 require("player")
 require("coin")
+require("hud")
 
 function love.load()
     Map = STI("map/1.lua", {"box2d"})
@@ -29,6 +30,8 @@ function love.load()
     Player:load()
 
     Coin.addAllCoins()
+
+    HUD:load()
 end
 
 function love.update(dt)
@@ -36,6 +39,7 @@ function love.update(dt)
     Map:update(dt)
     Player:update(dt)
     Coin.updateAll(dt)
+    HUD:update(dt)
 
     mountains.one.position = -(Map.camX * 0.25 - love.graphics.getWidth() / 4) % love.graphics.getWidth()
     mountains.two.position = -(Map.camX * 0.5 - love.graphics.getWidth() / 4) % love.graphics.getWidth()
@@ -95,10 +99,9 @@ function love.draw()
 
     Player:draw()
     Coin.drawAll()
+    HUD:draw()
 
     -- love.graphics.pop()
-    love.graphics.print("FPS: " .. love.timer.getFPS(), Map.camX + 10, Map.camY + 20)
-    print(love.timer.getFPS())
 end
 
 function beginContact(firstBody, secondBody, collision)
