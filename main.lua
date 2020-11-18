@@ -3,8 +3,10 @@ require("player")
 require("coin")
 require("hud")
 
+level = 1
+
 function love.load()
-    Map = STI("map/1.lua", {"box2d"})
+    Map = STI("map/" .. level .. ".lua", {"box2d"})
     World = love.physics.newWorld(0, 0)
     World:setCallbacks(beginContact, endContact)
     Map:box2d_init(World)
@@ -58,7 +60,6 @@ function love.keypressed(key)
         if Player.character == 2 or Player.character == 3 then
             Player.character = 1
             Player:loadAssets()
-            print("SPILLER 1")
         end
     end
 
@@ -66,7 +67,6 @@ function love.keypressed(key)
         if Player.character == 1 or Player.character == 3 then
             Player.character = 2
             Player:loadAssets()
-            print("SPILLER 2")
         end
     end
 
@@ -74,7 +74,6 @@ function love.keypressed(key)
         if Player.character == 1 or Player.character == 2 then
             Player.character = 3
             Player:loadAssets()
-            print("SPILLER 3")
         end
     end
 end

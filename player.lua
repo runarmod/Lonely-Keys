@@ -184,7 +184,6 @@ function Player:nextFrame()
 
     self.physics.fixture:destroy()
     self.physics.fixture = love.physics.newFixture(self.physics.body, self.physics.shape)
-
 end
 
 function Player:syncPhysics()

@@ -48,7 +48,7 @@ function HUD:updateTime()
 end
 
 function HUD:updateLives()
-    self.lives.half.value = 1 
+    self.lives.half.value = 1
     if Player.lives % 1 == 0 then
         self.lives.half.value = 0
     end
@@ -70,14 +70,16 @@ function HUD:drawFPS()
     local FPSDisplayText = "FPS: " .. self.FPS.value
     love.graphics.setFont(self.font)
     love.graphics.setColor(0, 0, 0, 0.5)
-    love.graphics.print(FPSDisplayText, Map.camX + self.FPS.x + self.shadowOffset, Map.camY + self.FPS.y + self.shadowOffset)
+    love.graphics.print(FPSDisplayText, Map.camX + self.FPS.x + self.shadowOffset,
+        Map.camY + self.FPS.y + self.shadowOffset)
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.print(FPSDisplayText, Map.camX + self.FPS.x, Map.camY + self.FPS.y)
 end
 
 function HUD:drawCoin()
     love.graphics.setColor(0, 0, 0, 0.5)
-    love.graphics.draw(self.coin.img, Map.camX + self.coin.x + self.shadowOffset, Map.camY + self.coin.y + self.shadowOffset)
+    love.graphics.draw(self.coin.img, Map.camX + self.coin.x + self.shadowOffset,
+        Map.camY + self.coin.y + self.shadowOffset)
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.draw(self.coin.img, Map.camX + self.coin.x, Map.camY + self.coin.y)
 end
@@ -86,7 +88,8 @@ function HUD:drawCoinAmount()
     local coinDisplayText = " : " .. Player.coins
     love.graphics.setFont(self.font)
     love.graphics.setColor(0, 0, 0, 0.5)
-    love.graphics.print(coinDisplayText, Map.camX + self.coin.x + self.shadowOffset + self.coin.width, Map.camY + self.coin.y + self.shadowOffset)
+    love.graphics.print(coinDisplayText, Map.camX + self.coin.x + self.shadowOffset + self.coin.width,
+        Map.camY + self.coin.y + self.shadowOffset)
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.print(coinDisplayText, Map.camX + self.coin.x + self.coin.width, Map.camY + self.coin.y)
 end
@@ -95,7 +98,8 @@ function HUD:drawTime()
     local timeDisplayText = string.format("Time: %.1f", self.timer.currentTime)
     love.graphics.setFont(self.font)
     love.graphics.setColor(0, 0, 0, 0.5)
-    love.graphics.print(timeDisplayText, Map.camX + self.timer.x + self.shadowOffset, Map.camY + self.timer.y + self.shadowOffset)
+    love.graphics.print(timeDisplayText, Map.camX + self.timer.x + self.shadowOffset,
+        Map.camY + self.timer.y + self.shadowOffset)
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.print(timeDisplayText, Map.camX + self.timer.x, Map.camY + self.timer.y)
 end
@@ -110,7 +114,8 @@ function HUD:drawFullLives()
     for i = 1, self.lives.full.value do
         local offset = (i - 1) * self.lives.width
         love.graphics.setColor(0, 0, 0, 0.5)
-        love.graphics.draw(self.lives.full.img, Map.camX + self.lives.x + offset + self.shadowOffset, Map.camY + self.lives.y + self.shadowOffset)
+        love.graphics.draw(self.lives.full.img, Map.camX + self.lives.x + offset + self.shadowOffset,
+            Map.camY + self.lives.y + self.shadowOffset)
         love.graphics.setColor(1, 1, 1, 1)
         love.graphics.draw(self.lives.full.img, Map.camX + self.lives.x + offset, Map.camY + self.lives.y)
     end
@@ -120,7 +125,8 @@ function HUD:drawHalfLives()
     for i = 1, self.lives.half.value do
         local offset = (i - 1) * self.lives.width + self.lives.full.value * self.lives.width
         love.graphics.setColor(0, 0, 0, 0.5)
-        love.graphics.draw(self.lives.half.img, Map.camX + self.lives.x + offset + self.shadowOffset, Map.camY + self.lives.y + self.shadowOffset)
+        love.graphics.draw(self.lives.half.img, Map.camX + self.lives.x + offset + self.shadowOffset,
+            Map.camY + self.lives.y + self.shadowOffset)
         love.graphics.setColor(1, 1, 1, 1)
         love.graphics.draw(self.lives.half.img, Map.camX + self.lives.x + offset, Map.camY + self.lives.y)
     end
@@ -130,7 +136,8 @@ function HUD:drawEmptyLives()
     for i = 1, self.lives.empty.value do
         local offset = (i - 1) * self.lives.width + self.lives.full.value * self.lives.width + self.lives.half.value * self.lives.width
         love.graphics.setColor(0, 0, 0, 0.5)
-        love.graphics.draw(self.lives.empty.img, Map.camX + self.lives.x + offset + self.shadowOffset, Map.camY + self.lives.y + self.shadowOffset)
+        love.graphics.draw(self.lives.empty.img, Map.camX + self.lives.x + offset + self.shadowOffset,
+            Map.camY + self.lives.y + self.shadowOffset)
         love.graphics.setColor(1, 1, 1, 1)
         love.graphics.draw(self.lives.empty.img, Map.camX + self.lives.x + offset, Map.camY + self.lives.y)
     end
