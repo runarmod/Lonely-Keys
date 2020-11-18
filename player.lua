@@ -26,6 +26,7 @@ function Player:load()
     self.currentJumps = 1
 
     self.coins = 0
+    self.lives = 5
 
     self:loadAssets()
 
@@ -275,6 +276,7 @@ end
 
 function Player:incrementCoins()
     self.coins = self.coins + 10
+    self.lives = self.lives - 0.5
 end
 
 function Player:endContact(firstBody, secondBody, collision)
