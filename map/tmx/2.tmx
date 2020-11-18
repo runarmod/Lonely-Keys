@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="28" height="16" tilewidth="70" tileheight="70" infinite="0" nextlayerid="8" nextobjectid="13">
+ <editorsettings>
+  <export target="../2.lua" format="lua"/>
+ </editorsettings>
+ <tileset firstgid="1" name="tiles_spritesheet" tilewidth="70" tileheight="70" spacing="2" tilecount="169" columns="13">
+  <image source="../../assets/Tiles/tiles_spritesheet.png" width="944" height="936"/>
+ </tileset>
+ <tileset firstgid="170" name="items_spritesheet" tilewidth="70" tileheight="70" spacing="2" tilecount="63" columns="7">
+  <image source="../../assets/Items/items_spritesheet.png" width="504" height="648"/>
+ </tileset>
+ <layer id="1" name="ground" width="28" height="16">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,27,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,27,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,27,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,27,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,112,112,112,112,112,112,112,112,112,9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,165,165,165,165,165,165,165,165,165,164,112,112,112,112,112,112,0,0,0,0,0,0,0,0,0,
+0,0,0,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,0,0,0,0,0,0,0,0,0,
+0,0,0,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,0,0,0,0,0,0,0,0,0,
+0,0,0,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,0,0,0,0,0,0,0,0,0,
+0,0,0,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,0,0,0,0,0,0,0,0,0,
+0,0,0,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,0,0,0,0,0,0,0,0,0,
+0,0,0,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,165,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <objectgroup id="4" name="solid">
+  <properties>
+   <property name="collidable" type="bool" value="true"/>
+  </properties>
+  <object id="2" x="210" y="560">
+   <polygon points="0,0 630,0 700,70 1120,70 1120,560 0,560"/>
+  </object>
+  <object id="4" x="560" y="210" width="70" height="70"/>
+  <object id="5" x="630" y="280" width="70" height="70"/>
+  <object id="6" x="700" y="350" width="70" height="70"/>
+  <object id="7" x="910" y="420" width="70" height="70"/>
+ </objectgroup>
+ <objectgroup id="5" name="deadly">
+  <object id="10" x="-70" y="0" width="70" height="1190"/>
+  <object id="11" x="0" y="1120" width="2030" height="70"/>
+  <object id="12" x="1960" y="0" width="70" height="1120"/>
+ </objectgroup>
+ <objectgroup id="6" name="caveEntrance"/>
+ <objectgroup id="7" name="caveExit"/>
+ <objectgroup id="2" name="start">
+  <object id="1" x="350" y="350"/>
+ </objectgroup>
+ <objectgroup id="3" name="coins"/>
+</map>
