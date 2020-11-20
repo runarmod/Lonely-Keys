@@ -1,6 +1,7 @@
 local STI = require("sti")
 require("player")
 require("coin")
+require("key")
 require("hud")
 
 level = 1
@@ -11,10 +12,7 @@ function love.load()
     World:setCallbacks(beginContact, endContact)
     Map:box2d_init(World)
 
-    Map.layers.solid.visible = false
-    Map.layers.deadly.visible = false
-    Map.layers.caveEntrance.visible = false
-    Map.layers.caveExit.visible = false
+    hideObjectLayers()
 
     -- prevent anti-aliasing
     love.graphics.setDefaultFilter("nearest", "nearest")
@@ -32,6 +30,7 @@ function love.load()
     Player:load()
 
     Coin.addAllCoinsAndRemovePrevious()
+    Key.addAllKeysAndRemovePrevious()
 
     HUD:load()
 end
@@ -41,6 +40,7 @@ function love.update(dt)
     Map:update(dt)
     Player:update(dt)
     Coin.updateAll(dt)
+    Key.updateAll(dt)
     HUD:update(dt)
 
     mountains.one.position = -(Map.camX * 0.25 - love.graphics.getWidth() / 4) % love.graphics.getWidth()
@@ -98,6 +98,7 @@ function love.draw()
 
     Player:draw()
     Coin.drawAll()
+    Key.drawAll()
     HUD:draw()
 
     -- love.graphics.pop()
@@ -105,6 +106,7 @@ end
 
 function beginContact(firstBody, secondBody, collision)
     if Coin.beginContact(firstBody, secondBody, collision) then return end
+    if Key.beginContact(firstBody, secondBody, collision) then return end
     Player:beginContact(firstBody, secondBody, collision)
 end
 
@@ -114,4 +116,17 @@ end
 
 function math.round(toBeRounded)
     return math.floor(toBeRounded + 0.5)
+end
+
+function changeLevel(localLevel)
+    level = localLevel
+    love.load()
+end
+
+function hideObjectLayers()
+    for i, layer in ipairs(Map.layers) do
+        if layer.type == "objectgroup" then
+            layer.visible = false
+        end
+    end
 end

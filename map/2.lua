@@ -8,8 +8,8 @@ return {
   height = 16,
   tilewidth = 70,
   tileheight = 70,
-  nextlayerid = 8,
-  nextobjectid = 13,
+  nextlayerid = 9,
+  nextobjectid = 16,
   properties = {},
   tilesets = {
     {
@@ -267,7 +267,7 @@ return {
       type = "objectgroup",
       draworder = "topdown",
       id = 2,
-      name = "start",
+      name = "startEnd",
       visible = true,
       opacity = 1,
       offsetx = 0,
@@ -275,10 +275,10 @@ return {
       properties = {},
       objects = {
         {
-          id = 1,
-          name = "",
+          id = 13,
+          name = "start",
           type = "",
-          shape = "rectangle",
+          shape = "point",
           x = 350,
           y = 350,
           width = 0,
@@ -288,6 +288,18 @@ return {
           properties = {}
         }
       }
+    },
+    {
+      type = "objectgroup",
+      draworder = "topdown",
+      id = 8,
+      name = "keys",
+      visible = true,
+      opacity = 1,
+      offsetx = 0,
+      offsety = 0,
+      properties = {},
+      objects = {}
     },
     {
       type = "objectgroup",

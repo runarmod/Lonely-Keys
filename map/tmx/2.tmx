@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="28" height="16" tilewidth="70" tileheight="70" infinite="0" nextlayerid="8" nextobjectid="13">
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="28" height="16" tilewidth="70" tileheight="70" infinite="0" nextlayerid="9" nextobjectid="16">
  <editorsettings>
   <export target="../2.lua" format="lua"/>
  </editorsettings>
@@ -48,8 +48,11 @@
  </objectgroup>
  <objectgroup id="6" name="caveEntrance"/>
  <objectgroup id="7" name="caveExit"/>
- <objectgroup id="2" name="start">
-  <object id="1" x="350" y="350"/>
+ <objectgroup id="2" name="startEnd">
+  <object id="13" name="start" x="350" y="350">
+   <point/>
+  </object>
  </objectgroup>
+ <objectgroup id="8" name="keys"/>
  <objectgroup id="3" name="coins"/>
 </map>

@@ -11,6 +11,25 @@ function HUD:load()
     self.coin.x = 300
     self.coin.y = 50
 
+    self.key = {}
+    self.key.img = {}
+    self.key.img.disabled = {}
+    self.key.img.disabled.keyYellow = love.graphics.newImage("assets/HUD/hud_keyYellow_disabled.png")
+    self.key.img.disabled.keyBlue = love.graphics.newImage("assets/HUD/hud_keyBlue_disabled.png")
+    self.key.img.disabled.keyGreen = love.graphics.newImage("assets/HUD/hud_keyGreen_disabled.png")
+    self.key.img.disabled.keyRed = love.graphics.newImage("assets/HUD/hud_keyRed_disabled.png")
+
+    self.key.img.collected = {}
+    self.key.img.collected.keyYellow = love.graphics.newImage("assets/HUD/hud_keyYellow.png")
+    self.key.img.collected.keyBlue = love.graphics.newImage("assets/HUD/hud_keyBlue.png")
+    self.key.img.collected.keyGreen = love.graphics.newImage("assets/HUD/hud_keyGreen.png")
+    self.key.img.collected.keyRed = love.graphics.newImage("assets/HUD/hud_keyRed.png")
+
+    self.key.height = self.key.img.collected.keyYellow:getHeight()
+    self.key.width = self.key.img.collected.keyYellow:getWidth()
+    self.key.x = 1200
+    self.key.y = 50
+
     self.FPS = {}
     self.FPS.x = 50
     self.FPS.y = 50
@@ -62,6 +81,8 @@ function HUD:draw()
     HUD:drawFPS()
     HUD:drawCoin()
     HUD:drawCoinAmount()
+    HUD:drawDisabledKeys()
+    HUD:drawCollectedKeys()
     HUD:drawTime()
     HUD:drawLives()
 end
@@ -92,6 +113,42 @@ function HUD:drawCoinAmount()
         Map.camY + self.coin.y + self.shadowOffset)
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.print(coinDisplayText, Map.camX + self.coin.x + self.coin.width, Map.camY + self.coin.y)
+end
+
+function HUD:drawDisabledKeys()
+    local i = 1
+    for keyName, currentKey in pairs(self.key.img.disabled) do
+        for _, playerAvailableKey in ipairs(Player.keys.available) do
+            if playerAvailableKey == keyName then
+                local offset = (i - 1) * self.key.width
+                love.graphics.setColor(0, 0, 0, 0.5)
+                love.graphics.draw(currentKey, Map.camX + self.key.x + self.shadowOffset + offset,
+                    Map.camY + self.key.y + self.shadowOffset)
+                love.graphics.setColor(1, 1, 1, 1)
+                love.graphics.draw(currentKey, Map.camX + self.key.x + offset, Map.camY + self.key.y)
+                i = i + 1
+                break
+            end
+        end
+    end
+end
+
+function HUD:drawCollectedKeys()
+    local i = 1
+    for keyName, currentKey in pairs(self.key.img.collected) do
+        for _, playerCollectedKey in ipairs(Player.keys.collected) do
+            if playerCollectedKey == keyName then
+                local offset = (i - 1) * self.key.width
+                love.graphics.setColor(0, 0, 0, 0.5)
+                love.graphics.draw(currentKey, Map.camX + self.key.x + self.shadowOffset + offset,
+                    Map.camY + self.key.y + self.shadowOffset)
+                love.graphics.setColor(1, 1, 1, 1)
+                love.graphics.draw(currentKey, Map.camX + self.key.x + offset, Map.camY + self.key.y)
+                break
+            end
+        end
+        i = i + 1
+    end
 end
 
 function HUD:drawTime()
@@ -134,7 +191,8 @@ end
 
 function HUD:drawEmptyLives()
     for i = 1, self.lives.empty.value do
-        local offset = (i - 1) * self.lives.width + self.lives.full.value * self.lives.width + self.lives.half.value * self.lives.width
+        local offset = (i - 1) * self.lives.width + self.lives.full.value * self.lives.width + self.lives.half.value *
+                           self.lives.width
         love.graphics.setColor(0, 0, 0, 0.5)
         love.graphics.draw(self.lives.empty.img, Map.camX + self.lives.x + offset + self.shadowOffset,
             Map.camY + self.lives.y + self.shadowOffset)

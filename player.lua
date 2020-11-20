@@ -6,8 +6,14 @@ function Player:load()
     self.direction = 1
     self.state = "jump"
 
-    self.x = Map.layers.start.objects[1].x
-    self.y = Map.layers.start.objects[1].y
+    for i, object in ipairs(Map.layers.startEnd.objects) do
+        if object.name == "start" then
+            self.x = object.x
+            self.y = object.y
+            break
+        end
+    end
+
     self.dx = 0
     self.dy = 0
     self.maxSpeed = 300
@@ -28,6 +34,15 @@ function Player:load()
     self.coins = 0
     self.lives = 5
 
+    self.keys = {}
+    self.keys.collected = {}
+    self.keys.available = {}
+
+    for i, object in ipairs(Map.layers.keys.objects) do
+        table.insert(self.keys.available, object.name)
+    end
+
+    self:checkIfAllKeysAreCollected()
     self:loadAssets()
 
     self.physics = {}
@@ -108,6 +123,8 @@ function Player:update(dt)
     self:move(dt)
     self:applyGravity(dt)
     self:checkDead(dt)
+    self:checkIfAllKeysAreCollected()
+    self:checkFinished()
 end
 
 function Player:updateCamera()
@@ -236,6 +253,25 @@ function Player:checkDead(dt)
     end
 end
 
+function Player:checkIfAllKeysAreCollected()
+    if #self.keys.collected == #self.keys.available then
+        self.allKeysCollected = true
+    else
+        self.allKeysCollected = false
+    end
+end
+
+function Player:checkFinished()
+    for _, object in ipairs(Map.layers.startEnd.objects) do
+        if object.name == "end" then
+            finishArea = object
+        end
+    end
+    if self.allKeysCollected and Player:inside(finishArea) and love.keyboard.isDown("e") then
+        changeLevel(level % 2 + 1)
+    end
+end
+
 function Player:beginContact(firstBody, secondBody, collision)
     -- don't need to continue if we are already on the ground
     if self.grounded then
@@ -278,6 +314,10 @@ function Player:incrementCoins()
     self.lives = self.lives - 0.5
 end
 
+function Player:addKey(key)
+    table.insert(self.keys.collected, key)
+end
+
 function Player:endContact(firstBody, secondBody, collision)
     if firstBody == self.physics.fixture or secondBody == self.physics.fixture then
         if self.currentGroundCollision == collision then
@@ -291,5 +331,4 @@ end
 function Player:draw()
     love.graphics.draw(self.animation.draw, self.x, self.y, 0, self.direction, 1, self.animation.width / 2,
         self.animation.height / 2)
-    print(self.coins)
 end
