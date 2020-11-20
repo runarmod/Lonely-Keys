@@ -117,8 +117,8 @@ end
 
 function HUD:drawDisabledKeys()
     local i = 1
-    for keyName, currentKey in pairs(self.key.img.disabled) do
-        for _, playerAvailableKey in ipairs(Player.keys.available) do
+    for _, playerAvailableKey in ipairs(Player.keys.available) do
+        for keyName, currentKey in pairs(self.key.img.disabled) do
             if playerAvailableKey == keyName then
                 local offset = (i - 1) * self.key.width
                 love.graphics.setColor(0, 0, 0, 0.5)
@@ -135,18 +135,19 @@ end
 
 function HUD:drawCollectedKeys()
     local i = 1
-    for keyName, currentKey in pairs(self.key.img.collected) do
-        for _, playerCollectedKey in ipairs(Player.keys.collected) do
-            if playerCollectedKey == keyName then
-                local offset = (i - 1) * self.key.width
-                love.graphics.setColor(0, 0, 0, 0.5)
-                love.graphics.draw(currentKey, Map.camX + self.key.x + self.shadowOffset + offset,
-                    Map.camY + self.key.y + self.shadowOffset)
-                love.graphics.setColor(1, 1, 1, 1)
-                love.graphics.draw(currentKey, Map.camX + self.key.x + offset, Map.camY + self.key.y)
-                break
+    local doubleBreak = false
+    for _, availableKeyName in ipairs(Player.keys.available) do
+            for _, playerCollectedKey in ipairs(Player.keys.collected) do
+                if availableKeyName == playerCollectedKey then
+                    local offset = (i - 1) * self.key.width
+                    love.graphics.setColor(0, 0, 0, 0.5)
+                    love.graphics.draw(self.key.img.collected[playerCollectedKey], Map.camX + self.key.x + self.shadowOffset + offset, Map.camY + self.key.y + self.shadowOffset)
+                    love.graphics.setColor(1, 1, 1, 1)
+                    love.graphics.draw(self.key.img.collected[playerCollectedKey], Map.camX + self.key.x + offset, Map.camY + self.key.y)
+                    doubleBreak = true
+                    break
+                end
             end
-        end
         i = i + 1
     end
 end
