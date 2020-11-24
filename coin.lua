@@ -48,8 +48,10 @@ end
 function Coin.addAllCoinsAndRemovePrevious()
     ActiveCoins = {}
 
-    for i, coinData in ipairs(Map.layers.coins.objects) do
-        Coin.new(coinData.x, coinData.y)
+    if layerInMap("coins", Map) then
+        for i, coinData in ipairs(Map.layers.coins.objects) do
+            Coin.new(coinData.x, coinData.y)
+        end
     end
 end
 

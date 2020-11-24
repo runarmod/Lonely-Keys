@@ -1,10 +1,12 @@
 local STI = require("sti")
+require("keybinds")
 require("player")
 require("coin")
 require("key")
 require("hud")
+require("introHelp")
 
-level = 1
+level = "intro"
 
 function love.load()
     Map = STI("map/" .. level .. ".lua", {"box2d"})
@@ -33,6 +35,8 @@ function love.load()
     Key.addAllKeysAndRemovePrevious()
 
     HUD:load()
+
+    IntroHelp:load()
 end
 
 function love.update(dt)
@@ -42,6 +46,7 @@ function love.update(dt)
     Coin.updateAll(dt)
     Key.updateAll(dt)
     HUD:update(dt)
+    IntroHelp:update(dt)
 
     mountains.one.position = -(Map.camX * 0.25 - love.graphics.getWidth() / 4) % love.graphics.getWidth()
     mountains.two.position = -(Map.camX * 0.5 - love.graphics.getWidth() / 4) % love.graphics.getWidth()
@@ -50,30 +55,42 @@ end
 function love.keypressed(key)
     Player:jump(key)
 
-    if key == 'escape' then
-        love.event.quit()
-    elseif key == 'r' then
-        love.load()
-    end
-
-    if key == '1' then
-        if Player.character == 2 or Player.character == 3 then
-            Player.character = 1
-            Player:loadAssets()
+    for _, keyBind in ipairs(keybinds.quit) do
+        if keyBind == key then
+            love.event.quit()
         end
     end
 
-    if key == '2' then
-        if Player.character == 1 or Player.character == 3 then
-            Player.character = 2
-            Player:loadAssets()
+    for _, keyBind in ipairs(keybinds.reload) do
+        if keyBind == key then
+            love.load()
         end
     end
 
-    if key == '3' then
-        if Player.character == 1 or Player.character == 2 then
-            Player.character = 3
-            Player:loadAssets()
+    for _, keyBind in ipairs(keybinds.player1) do
+        if key == keyBind then
+            if Player.character == 2 or Player.character == 3 then
+                Player.character = 1
+                Player:loadAssets()
+            end
+        end
+    end
+
+    for _, keyBind in ipairs(keybinds.player2) do
+        if key == keyBind then
+            if Player.character == 1 or Player.character == 3 then
+                Player.character = 2
+                Player:loadAssets()
+            end
+        end
+    end
+
+    for _, keyBind in ipairs(keybinds.player3) do
+        if key == keyBind then
+            if Player.character == 1 or Player.character == 2 then
+                Player.character = 3
+                Player:loadAssets()
+            end
         end
     end
 end
@@ -100,6 +117,7 @@ function love.draw()
     Coin.drawAll()
     Key.drawAll()
     HUD:draw()
+    IntroHelp:draw()
 
     -- love.graphics.pop()
 end
@@ -107,6 +125,7 @@ end
 function beginContact(firstBody, secondBody, collision)
     if Coin.beginContact(firstBody, secondBody, collision) then return end
     if Key.beginContact(firstBody, secondBody, collision) then return end
+    IntroHelp.beginContact(firstBody, secondBody, collision)
     Player:beginContact(firstBody, secondBody, collision)
 end
 
@@ -129,4 +148,12 @@ function hideObjectLayers()
             layer.visible = false
         end
     end
+end
+
+function layerInMap(layer, map)
+    for i, locallayer in ipairs(map.layers) do
+        if locallayer.name == layer then return true end
+    end
+
+    return false
 end

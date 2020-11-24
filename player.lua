@@ -2,15 +2,20 @@ Player = {}
 
 function Player:load()
     -- 1, 2 or 3
-    self.character = 1
+    self.character = self.character or character or 1
     self.direction = 1
     self.state = "jump"
 
-    for i, object in ipairs(Map.layers.startEnd.objects) do
-        if object.name == "start" then
-            self.x = object.x
-            self.y = object.y
-            break
+    self.x = 0
+    self.y = 0
+
+    if layerInMap("startEnd", Map) then
+        for i, object in ipairs(Map.layers.startEnd.objects) do
+            if object.name == "start" then
+                self.x = object.x
+                self.y = object.y
+                break
+            end
         end
     end
 
@@ -38,8 +43,10 @@ function Player:load()
     self.keys.collected = {}
     self.keys.available = {}
 
-    for i, object in ipairs(Map.layers.keys.objects) do
-        table.insert(self.keys.available, object.name)
+    if layerInMap("keys", Map) then
+        for i, object in ipairs(Map.layers.keys.objects) do
+            table.insert(self.keys.available, object.name)
+        end
     end
 
     self:checkIfAllKeysAreCollected()
@@ -138,7 +145,7 @@ end
 function Player:setState()
     if not self.grounded then
         self.state = "jump"
-    elseif love.keyboard.isDown("c", "lshift", "s", "down") then
+    elseif love.keyboard.isDown(keybinds.duck) then
         self.state = "duck"
     elseif self.dx == 0 then
         self.state = "idle"
@@ -156,20 +163,21 @@ function Player:setDirection()
 end
 
 function Player:checkPosition()
-    local caveEntrance = Map.layers.caveEntrance.objects[1]
-    local caveExit = Map.layers.caveExit.objects[1]
-
-    for i, rectangleObject in ipairs(Map.layers.caveEntrance.objects) do
-        if Player:inside(caveEntrance) then
-            Map.layers.caveHide.visible = false
-            break
+    if layerInMap("caveEntrance", Map) then
+        for i, rectangleObject in ipairs(Map.layers.caveEntrance.objects) do
+            if Player:inside(rectangleObject) then
+                Map.layers.caveHide.visible = false
+                break
+            end
         end
     end
 
-    for i, rectangleObject in ipairs(Map.layers.caveExit.objects) do
-        if Player:inside(caveExit) then
-            Map.layers.caveHide.visible = true
-            break
+    if layerInMap("caveExit", Map) then
+        for i, rectangleObject in ipairs(Map.layers.caveExit.objects) do
+            if Player:inside(rectangleObject) then
+                Map.layers.caveHide.visible = true
+                break
+            end
         end
     end
 end
@@ -216,12 +224,15 @@ function Player:move(dt)
         (or right) if all the 3 next if-statements were in if, elseif, else
     ]]
 
-    local left = love.keyboard.isDown("a", "left")
-    local right = love.keyboard.isDown("d", "right")
+    local left = love.keyboard.isDown(keybinds.left)
+    local right = love.keyboard.isDown(keybinds.right)
+
+    print(left, right)
 
     if (not left and not right) or (left and right) then
         -- self:triggerFriction(dt)
         self.dx = 0
+        return
     end
 
     if left then
@@ -246,9 +257,11 @@ function Player:applyGravity(dt)
 end
 
 function Player:checkDead(dt)
-    for i, rectangle in ipairs(Map.layers.deadly.objects) do
-        if Player:inside(rectangle) then
-            love.load()
+    if layerInMap("deadly", Map) then
+        for i, rectangle in ipairs(Map.layers.deadly.objects) do
+            if Player:inside(rectangle) then
+                love.load()
+            end
         end
     end
 end
@@ -262,15 +275,28 @@ function Player:checkIfAllKeysAreCollected()
 end
 
 function Player:checkFinished()
-    for _, object in ipairs(Map.layers.startEnd.objects) do
-        if object.name == "end" then
-            finishArea = object
+    local finishAreas = {}
+    if layerInMap("startEnd", Map) then
+        for _, object in ipairs(Map.layers.startEnd.objects) do
+            if object.name == "end" then
+                table.insert(finishAreas, object)
+            end
+        end
+
+        if self.allKeysCollected and love.keyboard.isDown("e") then
+            for i, finishArea in ipairs(finishAreas) do
+                if Player:inside(finishArea) then
+                    if level == "intro" then
+                        changeLevel(1)
+                    else
+                        changeLevel(level % 2 + 1)
+                    end
+                end
+            end
         end
     end
-    if self.allKeysCollected and Player:inside(finishArea) and love.keyboard.isDown("e") then
-        changeLevel(level % 2 + 1)
-    end
 end
+
 
 function Player:beginContact(firstBody, secondBody, collision)
     -- don't need to continue if we are already on the ground
@@ -302,16 +328,20 @@ function Player:land(collision)
 end
 
 function Player:jump(key)
-    if (key == "up" or key == "w" or key == "space") and self.currentJumps < self.maxJumps then
-        self.dy = -(self.jumpVel * (1 - self.currentJumps * 0.2))
-        self.grounded = false
-        self.currentJumps = self.currentJumps + 1
+    for _, keyBind in ipairs(keybinds.jump) do
+        if key == keyBind and self.currentJumps < self.maxJumps then
+            self.dy = -(self.jumpVel * (1 - self.currentJumps * 0.2))
+            self.grounded = false
+            self.currentJumps = self.currentJumps + 1
+            return
+        end
     end
 end
 
 function Player:incrementCoins()
     self.coins = self.coins + 10
     self.lives = self.lives - 0.5
+    HUD.score.value = HUD.score.value - 50
 end
 
 function Player:addKey(key)

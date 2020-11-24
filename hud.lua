@@ -50,12 +50,20 @@ function HUD:load()
     self.lives.empty = {}
     self.lives.empty.img = love.graphics.newImage("assets/HUD/hud_heartEmpty.png")
     self.lives.width = self.lives.full.img:getWidth()
+
+    self.score = {}
+    self.score.x = 1500
+    self.score.y = 50
+    self.score.value = 1000
+    self.score.timer = 0
+    self.score.rate = 1
 end
 
 function HUD:update(dt)
     HUD:updateFPS()
     HUD:updateTime()
     HUD:updateLives()
+    HUD:updateScore(dt)
 end
 
 function HUD:updateFPS()
@@ -77,6 +85,14 @@ function HUD:updateLives()
     self.lives.empty.value = self.lives.total - self.lives.full.value - self.lives.half.value
 end
 
+function HUD:updateScore(dt)
+    self.score.timer = self.score.timer + dt
+    if self.score.timer > self.score.rate then
+        self.score.timer = 0
+        self.score.value = self.score.value - 1
+    end
+end
+
 function HUD:draw()
     HUD:drawFPS()
     HUD:drawCoin()
@@ -85,6 +101,7 @@ function HUD:draw()
     HUD:drawCollectedKeys()
     HUD:drawTime()
     HUD:drawLives()
+    HUD:drawScore()
 end
 
 function HUD:drawFPS()
@@ -192,12 +209,21 @@ end
 
 function HUD:drawEmptyLives()
     for i = 1, self.lives.empty.value do
-        local offset = (i - 1) * self.lives.width + self.lives.full.value * self.lives.width + self.lives.half.value *
-                           self.lives.width
+        local offset = (i - 1) * self.lives.width + self.lives.full.value * self.lives.width + self.lives.half.value * self.lives.width
         love.graphics.setColor(0, 0, 0, 0.5)
         love.graphics.draw(self.lives.empty.img, Map.camX + self.lives.x + offset + self.shadowOffset,
             Map.camY + self.lives.y + self.shadowOffset)
         love.graphics.setColor(1, 1, 1, 1)
         love.graphics.draw(self.lives.empty.img, Map.camX + self.lives.x + offset, Map.camY + self.lives.y)
     end
+end
+
+function HUD:drawScore()
+    local scoreDisplayText = string.format("Score: %.0f", self.score.value)
+    love.graphics.setFont(self.font)
+    love.graphics.setColor(0, 0, 0, 0.5)
+    love.graphics.print(scoreDisplayText, Map.camX + self.score.x + self.shadowOffset,
+        Map.camY + self.score.y + self.shadowOffset)
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.print(scoreDisplayText, Map.camX + self.score.x, Map.camY + self.score.y)
 end

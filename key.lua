@@ -15,6 +15,7 @@ function Key.new(key, x, y)
     instance.y = y
     instance.name = key
     instance.img = keyImages[key]
+    instance.randomTimeOffset = math.random(0, 100)
 
     instance.width = instance.img:getWidth()
     instance.height = instance.img:getHeight()
@@ -38,6 +39,7 @@ function Key:remove()
 end
 
 function Key:update(dt)
+    self:levitate(dt)
     self:checkRemove()
 end
 
@@ -47,6 +49,10 @@ function Key:checkRemove()
     end
 end
 
+function Key:levitate(dt)
+    self.y = self.y - math.sin(love.timer.getTime() * 3 + self.randomTimeOffset) / 30
+end
+
 function Key:draw()
     love.graphics.draw(self.img, self.x, self.y, 0, self.scaleX, 1, self.width / 2, self.height / 2)
 end
@@ -54,8 +60,10 @@ end
 function Key.addAllKeysAndRemovePrevious()
     ActiveKeys = {}
 
-    for i, KeyData in ipairs(Map.layers.keys.objects) do
-        Key.new(KeyData.name, KeyData.x, KeyData.y)
+    if layerInMap("keys", Map) then
+        for i, KeyData in ipairs(Map.layers.keys.objects) do
+            Key.new(KeyData.name, KeyData.x, KeyData.y)
+        end
     end
 end
 
