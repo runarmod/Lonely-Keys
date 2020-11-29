@@ -1,3 +1,4 @@
+
 local STI = require("sti")
 require("keybinds")
 require("player")
@@ -7,6 +8,11 @@ require("hud")
 require("introHelp")
 
 level = "intro"
+
+music = love.audio.newSource('music/music.wav', 'stream')
+    music:setLooping(true)
+    music:setVolume(0.01)
+    music:play()
 
 function love.load()
     Map = STI("map/" .. level .. ".lua", {"box2d"})
@@ -29,6 +35,12 @@ function love.load()
     mountains.two.image = love.graphics.newImage("assets1/Mountains_2.png")
     mountains.one.position, mountains.two.position = 0, 0
 
+    showDeathScreen = false
+
+    font = {}
+    font.large = love.graphics.newFont("assets/upheavtt.ttf", 42)
+    font.small = love.graphics.newFont("assets/upheavtt.ttf", 21)
+
     Player:load()
 
     Coin.addAllCoinsAndRemovePrevious()
@@ -37,6 +49,8 @@ function love.load()
     HUD:load()
 
     IntroHelp:load()
+
+    loadDoorImages()
 end
 
 function love.update(dt)
@@ -53,6 +67,11 @@ function love.update(dt)
 end
 
 function love.keypressed(key)
+    if showDeathScreen then
+        showDeathScreen = false
+        love.load()
+    end
+
     Player:jump(key)
 
     for _, keyBind in ipairs(keybinds.quit) do
@@ -96,30 +115,92 @@ function love.keypressed(key)
 end
 
 function love.draw()
-    -- -- draw the background with the sun
-    love.graphics.draw(background, 0, 0, 0, love.graphics.getHeight() / background:getHeight())
+    if showDeathScreen then
+        drawDeathScreen()
+    else
+        -- draw the background with the sun
+        love.graphics.draw(background, 0, 0, 0, love.graphics.getHeight() / background:getHeight())
 
-    -- -- draw the two mountain-backgrounds
-    for _, mountain in pairs(mountains) do
-        love.graphics.draw(mountain.image, mountain.position, 0, 0,
-            love.graphics.getWidth() / mountain.image:getWidth(), love.graphics.getHeight() / mountain.image:getHeight())
-        love.graphics.draw(mountain.image, mountain.position - love.graphics.getWidth(), 0, 0,
-            love.graphics.getWidth() / mountain.image:getWidth(), love.graphics.getHeight() / mountain.image:getHeight())
+        -- draw the two mountain-backgrounds
+        for _, mountain in pairs(mountains) do
+            love.graphics.draw(mountain.image, mountain.position, 0, 0, love.graphics.getWidth() / mountain.image:getWidth(), love.graphics.getHeight() / mountain.image:getHeight())
+            love.graphics.draw(mountain.image, mountain.position - love.graphics.getWidth(), 0, 0, love.graphics.getWidth() / mountain.image:getWidth(), love.graphics.getHeight() / mountain.image:getHeight())
+        end
+
+        love.graphics.translate(math.round(-Map.camX), math.round(-Map.camY))
+        
+        Map:draw(-Map.camX, -Map.camY, 1, 1)
+        drawDoors()
+
+        Player:draw()
+        Coin.drawAll()
+        Key.drawAll()
+        HUD:draw()
+        IntroHelp:draw()
+    end
+end
+
+function drawDoors()
+    local topDoor = doorClosedTop
+    local midDoor = doorClosedMid
+
+    if Player.allKeysCollected then
+        topDoor = doorOpenTop
+        midDoor = doorOpenMid
     end
 
-    love.graphics.translate(math.round(-Map.camX), math.round(-Map.camY))
-    
-    Map:draw(-Map.camX, -Map.camY, 1, 1)
-    -- love.graphics.push()
-    -- love.graphics.scale(1, 1)
+    for i, object in ipairs(Map.layers.startEnd.objects) do
+        if object.name == "end" then
+            if object.x > 200 then
+                love.graphics.draw(topDoor, object.x, object.y - 35)
+                love.graphics.draw(midDoor, object.x, object.y + 35)
+            end
+        end
+    end
+end
 
-    Player:draw()
-    Coin.drawAll()
-    Key.drawAll()
-    HUD:draw()
-    IntroHelp:draw()
+function drawDeathScreen()
+    love.graphics.setBackgroundColor(0, 0, 0, 1)
+    love.graphics.setColor(1, 0, 0, 1)
+    love.graphics.setFont(font.large)
+    love.graphics.printf("You died!", 1920 / 2, 1080 / 2, 1920, "center", 0, 1, 1, 1920 / 2)
+    love.graphics.setFont(font.small)
+    love.graphics.printf("Press any button to restart", 1920 / 2, 1080 / 2 + 100, 1920, "center", 0, 1, 1, 1920 / 2)
+end
 
-    -- love.graphics.pop()
+function changeLevel(localLevel)
+    level = localLevel
+    love.load()
+end
+
+-- function restartLevel(fromDead)
+--     fromDead = fromDead or false
+--     if fromDead then
+--         love.graphics.setColor(0, 0, 0, 1)
+--     end
+--     print(fromDead)
+-- end
+
+function hideObjectLayers()
+    for i, layer in ipairs(Map.layers) do
+        if layer.type == "objectgroup" then
+            layer.visible = false
+        end
+    end
+end
+
+function layerInMap(layer, map)
+    for i, locallayer in ipairs(map.layers) do
+        if locallayer.name == layer then return true end
+    end
+    return false
+end
+
+function loadDoorImages()
+    doorClosedTop = love.graphics.newImage("assets/Tiles/door_closedTop.png")
+    doorClosedMid = love.graphics.newImage("assets/Tiles/door_closedMid.png")
+    doorOpenTop = love.graphics.newImage("assets/Tiles/door_openTop.png")
+    doorOpenMid = love.graphics.newImage("assets/Tiles/door_openMid.png")
 end
 
 function beginContact(firstBody, secondBody, collision)
@@ -135,25 +216,4 @@ end
 
 function math.round(toBeRounded)
     return math.floor(toBeRounded + 0.5)
-end
-
-function changeLevel(localLevel)
-    level = localLevel
-    love.load()
-end
-
-function hideObjectLayers()
-    for i, layer in ipairs(Map.layers) do
-        if layer.type == "objectgroup" then
-            layer.visible = false
-        end
-    end
-end
-
-function layerInMap(layer, map)
-    for i, locallayer in ipairs(map.layers) do
-        if locallayer.name == layer then return true end
-    end
-
-    return false
 end

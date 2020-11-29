@@ -38,6 +38,7 @@ end
 function Coin:checkRemove()
     if self.toBeRemoved then
         self:remove()
+        self.playCoinSound()
     end
 end
 
@@ -69,6 +70,10 @@ end
 
 function Coin:spin(dt)
     self.scaleX = math.sin(love.timer.getTime() * 2 + self.randomTimeOffset)
+end
+
+function Coin.playCoinSound()
+    Player.sounds.coin:clone():play()
 end
 
 function Coin.beginContact(firstBody, secondBody, collision)

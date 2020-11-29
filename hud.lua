@@ -2,7 +2,6 @@ HUD = {}
 
 function HUD:load()
     self.shadowOffset = 3
-    self.font = love.graphics.newFont("assets/upheavtt.ttf", 42)
 
     self.coin = {}
     self.coin.img = love.graphics.newImage("assets/HUD/hud_coins.png")
@@ -106,7 +105,7 @@ end
 
 function HUD:drawFPS()
     local FPSDisplayText = "FPS: " .. self.FPS.value
-    love.graphics.setFont(self.font)
+    love.graphics.setFont(font.large)
     love.graphics.setColor(0, 0, 0, 0.5)
     love.graphics.print(FPSDisplayText, Map.camX + self.FPS.x + self.shadowOffset,
         Map.camY + self.FPS.y + self.shadowOffset)
@@ -124,7 +123,7 @@ end
 
 function HUD:drawCoinAmount()
     local coinDisplayText = " : " .. Player.coins
-    love.graphics.setFont(self.font)
+    love.graphics.setFont(font.large)
     love.graphics.setColor(0, 0, 0, 0.5)
     love.graphics.print(coinDisplayText, Map.camX + self.coin.x + self.shadowOffset + self.coin.width,
         Map.camY + self.coin.y + self.shadowOffset)
@@ -137,7 +136,7 @@ function HUD:drawDisabledKeys()
     for _, playerAvailableKey in ipairs(Player.keys.available) do
         for keyName, currentKey in pairs(self.key.img.disabled) do
             if playerAvailableKey == keyName then
-                local offset = (i - 1) * self.key.width
+                local offset = (i - 1) * (self.key.width * 1.4)
                 love.graphics.setColor(0, 0, 0, 0.5)
                 love.graphics.draw(currentKey, Map.camX + self.key.x + self.shadowOffset + offset,
                     Map.camY + self.key.y + self.shadowOffset)
@@ -156,7 +155,7 @@ function HUD:drawCollectedKeys()
     for _, availableKeyName in ipairs(Player.keys.available) do
             for _, playerCollectedKey in ipairs(Player.keys.collected) do
                 if availableKeyName == playerCollectedKey then
-                    local offset = (i - 1) * self.key.width
+                    local offset = (i - 1) * (self.key.width * 1.4)
                     love.graphics.setColor(0, 0, 0, 0.5)
                     love.graphics.draw(self.key.img.collected[playerCollectedKey], Map.camX + self.key.x + self.shadowOffset + offset, Map.camY + self.key.y + self.shadowOffset)
                     love.graphics.setColor(1, 1, 1, 1)
@@ -171,7 +170,7 @@ end
 
 function HUD:drawTime()
     local timeDisplayText = string.format("Time: %.1f", self.timer.currentTime)
-    love.graphics.setFont(self.font)
+    love.graphics.setFont(font.large)
     love.graphics.setColor(0, 0, 0, 0.5)
     love.graphics.print(timeDisplayText, Map.camX + self.timer.x + self.shadowOffset,
         Map.camY + self.timer.y + self.shadowOffset)
@@ -220,7 +219,7 @@ end
 
 function HUD:drawScore()
     local scoreDisplayText = string.format("Score: %.0f", self.score.value)
-    love.graphics.setFont(self.font)
+    love.graphics.setFont(font.large)
     love.graphics.setColor(0, 0, 0, 0.5)
     love.graphics.print(scoreDisplayText, Map.camX + self.score.x + self.shadowOffset,
         Map.camY + self.score.y + self.shadowOffset)

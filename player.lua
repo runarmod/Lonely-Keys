@@ -2,7 +2,7 @@ Player = {}
 
 function Player:load()
     -- 1, 2 or 3
-    self.character = self.character or character or 1
+    self.character = self.character or 1
     self.direction = 1
     self.state = "jump"
 
@@ -31,6 +31,7 @@ function Player:load()
     Map.camY = -3
 
     self.grounded = false
+    self.ableToPlayLandSound = true
 
     -- we start midair, so we only have 1 jump remaining
     self.maxJumps = 2
@@ -57,9 +58,19 @@ function Player:load()
     self.physics.body:setFixedRotation(true)
     self.physics.shape = love.physics.newRectangleShape(self.animation.draw:getWidth(), self.animation.draw:getHeight())
     self.physics.fixture = love.physics.newFixture(self.physics.body, self.physics.shape)
-    self.physics.fixture:setDensity(8000)
-    self.physics.fixture:setFriction(1)
 
+    self.sounds = {
+        coin = love.audio.newSource("sounds/coin.wav", "static"),
+        dead = love.audio.newSource("sounds/dead.wav", "static"),
+        hurt = love.audio.newSource("sounds/hurt.wav", "static"),
+        jump = love.audio.newSource("sounds/jump.wav", "static"),
+        key = love.audio.newSource("sounds/key.wav", "static"),
+        land = love.audio.newSource("sounds/land.wav", "static")
+    }
+
+    -- for sound, track in pairs(self.sounds) do
+    --     self.sounds[sound]:setVolume(0.1)
+    -- end
 end
 
 function Player:loadAssets()
@@ -227,11 +238,8 @@ function Player:move(dt)
     local left = love.keyboard.isDown(keybinds.left)
     local right = love.keyboard.isDown(keybinds.right)
 
-    print(left, right)
-
     if (not left and not right) or (left and right) then
-        -- self:triggerFriction(dt)
-        self.dx = 0
+        self:triggerFriction(dt)
         return
     end
 
@@ -257,10 +265,12 @@ function Player:applyGravity(dt)
 end
 
 function Player:checkDead(dt)
+    if showDeathScreen then return end
     if layerInMap("deadly", Map) then
         for i, rectangle in ipairs(Map.layers.deadly.objects) do
             if Player:inside(rectangle) then
-                love.load()
+                self.sounds.dead:play()
+                showDeathScreen = true
             end
         end
     end
@@ -283,20 +293,17 @@ function Player:checkFinished()
             end
         end
 
-        if self.allKeysCollected and love.keyboard.isDown("e") then
-            for i, finishArea in ipairs(finishAreas) do
-                if Player:inside(finishArea) then
-                    if level == "intro" then
-                        changeLevel(1)
-                    else
-                        changeLevel(level % 2 + 1)
-                    end
+        for i, finishArea in ipairs(finishAreas) do
+            if (self.allKeysCollected or finishArea.x < 200) and love.keyboard.isDown(keybinds.nextLevel) and Player:inside(finishArea) then
+                if level == "intro" then
+                    changeLevel(1)
+                else
+                    changeLevel(level % 2 + 1)
                 end
             end
         end
     end
 end
-
 
 function Player:beginContact(firstBody, secondBody, collision)
     -- don't need to continue if we are already on the ground
@@ -325,6 +332,14 @@ function Player:land(collision)
     self.dy = 0
     self.grounded = true
     self.currentJumps = 0
+    self:tryToPlayLandSound()
+end
+
+function Player:tryToPlayLandSound()
+    if self.ableToPlayLandSound then
+        self.ableToPlayLandSound = false
+        self.sounds.land:play()
+    end
 end
 
 function Player:jump(key)
@@ -333,6 +348,8 @@ function Player:jump(key)
             self.dy = -(self.jumpVel * (1 - self.currentJumps * 0.2))
             self.grounded = false
             self.currentJumps = self.currentJumps + 1
+            self.sounds.jump:clone():play()
+            self.ableToPlayLandSound = true
             return
         end
     end

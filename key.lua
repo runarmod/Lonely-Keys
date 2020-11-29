@@ -46,11 +46,8 @@ end
 function Key:checkRemove()
     if self.toBeRemoved then
         self:remove()
+        self.playKeySound()
     end
-end
-
-function Key:levitate(dt)
-    self.y = self.y - math.sin(love.timer.getTime() * 3 + self.randomTimeOffset) / 30
 end
 
 function Key:draw()
@@ -77,6 +74,14 @@ function Key.drawAll()
     for i, instance in ipairs(ActiveKeys) do
         instance:draw()
     end
+end
+
+function Key:levitate(dt)
+    self.y = self.y - math.sin(love.timer.getTime() * 3 + self.randomTimeOffset) / 30
+end
+
+function Key.playKeySound()
+    Player.sounds.key:clone():play()
 end
 
 function Key.beginContact(firstBody, secondBody, collision)

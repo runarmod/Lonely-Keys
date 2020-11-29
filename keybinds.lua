@@ -1,4 +1,7 @@
 keybinds = {
+    nextLevel = {
+        "e"
+    },
     quit = {
         "escape"
     },
@@ -19,9 +22,9 @@ keybinds = {
         "left"
     },
     duck = {
+        "lshift",
         "s",
         "down",
-        "lshift",
         "c"
     },
     player1 = {
