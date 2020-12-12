@@ -4,6 +4,7 @@ require("keybinds")
 require("player")
 require("coin")
 require("key")
+require("spike")
 require("hud")
 require("introHelp")
 
@@ -45,6 +46,7 @@ function love.load()
 
     Coin.addAllCoinsAndRemovePrevious()
     Key.addAllKeysAndRemovePrevious()
+    Spike.addAllSpikesAndRemovePrevious()
 
     HUD:load()
 
@@ -54,11 +56,13 @@ function love.load()
 end
 
 function love.update(dt)
+    if showDeathScreen then return end
     World:update(dt)
     Map:update(dt)
     Player:update(dt)
     Coin.updateAll(dt)
     Key.updateAll(dt)
+    Spike.updateAll(dt)
     HUD:update(dt)
     IntroHelp:update(dt)
 
@@ -135,6 +139,7 @@ function love.draw()
         Player:draw()
         Coin.drawAll()
         Key.drawAll()
+        Spike.drawAll()
         HUD:draw()
         IntroHelp:draw()
     end
@@ -204,13 +209,16 @@ function loadDoorImages()
 end
 
 function beginContact(firstBody, secondBody, collision)
+	print("BEGIN CONTACT")
     if Coin.beginContact(firstBody, secondBody, collision) then return end
     if Key.beginContact(firstBody, secondBody, collision) then return end
+    if Spike.beginContact(firstBody, secondBody, collision) then return end
     IntroHelp.beginContact(firstBody, secondBody, collision)
     Player:beginContact(firstBody, secondBody, collision)
 end
 
 function endContact(firstBody, secondBody, collision)
+	print("END CONTACT")
     Player:endContact(firstBody, secondBody, collision)
 end
 

@@ -3,59 +3,70 @@ HUD = {}
 function HUD:load()
     self.shadowOffset = 3
 
-    self.coin = {}
-    self.coin.img = love.graphics.newImage("assets/HUD/hud_coins.png")
-    self.coin.height = self.coin.img:getHeight()
-    self.coin.width = self.coin.img:getWidth()
-    self.coin.x = 300
-    self.coin.y = 50
+    self.coin = {
+        img = love.graphics.newImage("assets/HUD/hud_coins.png"),
+        x = 300,
+        y = 50
+    }
+    self.coin.width, self.coin.height = self.coin.img:getDimensions()
 
-    self.key = {}
-    self.key.img = {}
-    self.key.img.disabled = {}
-    self.key.img.disabled.keyYellow = love.graphics.newImage("assets/HUD/hud_keyYellow_disabled.png")
-    self.key.img.disabled.keyBlue = love.graphics.newImage("assets/HUD/hud_keyBlue_disabled.png")
-    self.key.img.disabled.keyGreen = love.graphics.newImage("assets/HUD/hud_keyGreen_disabled.png")
-    self.key.img.disabled.keyRed = love.graphics.newImage("assets/HUD/hud_keyRed_disabled.png")
+    self.key = {
+        img = {
+            disabled = {
+                keyYellow = love.graphics.newImage("assets/HUD/hud_keyYellow_disabled.png"),
+                keyBlue = love.graphics.newImage("assets/HUD/hud_keyBlue_disabled.png"),
+                keyGreen = love.graphics.newImage("assets/HUD/hud_keyGreen_disabled.png"),
+                keyRed = love.graphics.newImage("assets/HUD/hud_keyRed_disabled.png")
+            },
 
-    self.key.img.collected = {}
-    self.key.img.collected.keyYellow = love.graphics.newImage("assets/HUD/hud_keyYellow.png")
-    self.key.img.collected.keyBlue = love.graphics.newImage("assets/HUD/hud_keyBlue.png")
-    self.key.img.collected.keyGreen = love.graphics.newImage("assets/HUD/hud_keyGreen.png")
-    self.key.img.collected.keyRed = love.graphics.newImage("assets/HUD/hud_keyRed.png")
+            collected = {
+                keyYellow = love.graphics.newImage("assets/HUD/hud_keyYellow.png"),
+                keyBlue = love.graphics.newImage("assets/HUD/hud_keyBlue.png"),
+                keyGreen = love.graphics.newImage("assets/HUD/hud_keyGreen.png"),
+                keyRed = love.graphics.newImage("assets/HUD/hud_keyRed.png")
+            }
+        },
+        x = 1200,
+        y = 50
+    }
+    self.key.width, self.key.height = self.key.img.collected.keyYellow:getDimensions()
 
-    self.key.height = self.key.img.collected.keyYellow:getHeight()
-    self.key.width = self.key.img.collected.keyYellow:getWidth()
-    self.key.x = 1200
-    self.key.y = 50
 
-    self.FPS = {}
-    self.FPS.x = 50
-    self.FPS.y = 50
+    self.FPS = {
+        x = 50,
+        y = 50
+    }
 
-    self.timer = {}
-    self.timer.x = 550
-    self.timer.y = 50
-    self.timer.startTime = love.timer.getTime()
 
-    self.lives = {}
-    self.lives.x = 800
-    self.lives.y = 50
-    self.lives.total = Player.lives
-    self.lives.full = {}
-    self.lives.full.img = love.graphics.newImage("assets/HUD/hud_heartFull.png")
-    self.lives.half = {}
-    self.lives.half.img = love.graphics.newImage("assets/HUD/hud_heartHalf.png")
-    self.lives.empty = {}
-    self.lives.empty.img = love.graphics.newImage("assets/HUD/hud_heartEmpty.png")
-    self.lives.width = self.lives.full.img:getWidth()
+    self.timer = {
+        x = 550,
+        y = 50,
+        startTime = love.timer.getTime()
+    }
 
-    self.score = {}
-    self.score.x = 1500
-    self.score.y = 50
-    self.score.value = 1000
-    self.score.timer = 0
-    self.score.rate = 1
+
+    self.lives = {
+        x = 800,
+        y = 50,
+        total = Player.lives,
+        full = {
+            img = love.graphics.newImage("assets/HUD/hud_heartFull.png")
+        },
+        half = {
+            img = love.graphics.newImage("assets/HUD/hud_heartHalf.png")
+        },
+        empty = {
+            img = love.graphics.newImage("assets/HUD/hud_heartEmpty.png")
+        },
+    }
+    self.lives.width, self.lives.height = self.lives.full.img:getDimensions()
+
+    
+    self.score = {
+        x = 1500,
+        y = 50,
+        value = Player.score
+    }
 end
 
 function HUD:update(dt)
@@ -85,11 +96,7 @@ function HUD:updateLives()
 end
 
 function HUD:updateScore(dt)
-    self.score.timer = self.score.timer + dt
-    if self.score.timer > self.score.rate then
-        self.score.timer = 0
-        self.score.value = self.score.value - 1
-    end
+    self.score.value = Player.score.value
 end
 
 function HUD:draw()

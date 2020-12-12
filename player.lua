@@ -38,11 +38,17 @@ function Player:load()
     self.currentJumps = 1
 
     self.coins = 0
+    self.score = {
+        value = 1000,
+        rate = 0.5,
+        timer = 0
+    }
     self.lives = 5
 
-    self.keys = {}
-    self.keys.collected = {}
-    self.keys.available = {}
+    self.keys = {
+        collected = {},
+        available = {}
+    }
 
     if layerInMap("keys", Map) then
         for i, object in ipairs(Map.layers.keys.objects) do
@@ -140,6 +146,7 @@ function Player:update(dt)
     self:syncPhysics()
     self:move(dt)
     self:applyGravity(dt)
+    self:updateScore(dt)
     self:checkDead(dt)
     self:checkIfAllKeysAreCollected()
     self:checkFinished()
@@ -264,6 +271,14 @@ function Player:applyGravity(dt)
     end
 end
 
+function Player:updateScore(dt)
+    self.score.timer = self.score.timer + dt
+    if self.score.timer > self.score.rate then
+        self.score.timer = 0
+        self.score.value = self.score.value - 1
+    end
+end
+
 function Player:checkDead(dt)
     if showDeathScreen then return end
     if layerInMap("deadly", Map) then
@@ -273,6 +288,10 @@ function Player:checkDead(dt)
                 showDeathScreen = true
             end
         end
+    end
+    if self.lives <= 0 then
+        self.sounds.dead:play()
+        showDeathScreen = true
     end
 end
 
@@ -306,8 +325,9 @@ function Player:checkFinished()
 end
 
 function Player:beginContact(firstBody, secondBody, collision)
+    print(self.grounded)
     -- don't need to continue if we are already on the ground
-    if self.grounded then
+    if self.grounded == true then
         return
     end
 
@@ -346,7 +366,6 @@ function Player:jump(key)
     for _, keyBind in ipairs(keybinds.jump) do
         if key == keyBind and self.currentJumps < self.maxJumps then
             self.dy = -(self.jumpVel * (1 - self.currentJumps * 0.2))
-            self.grounded = false
             self.currentJumps = self.currentJumps + 1
             self.sounds.jump:clone():play()
             self.ableToPlayLandSound = true
@@ -357,12 +376,24 @@ end
 
 function Player:incrementCoins()
     self.coins = self.coins + 10
-    self.lives = self.lives - 0.5
-    HUD.score.value = HUD.score.value - 50
 end
 
 function Player:addKey(key)
     table.insert(self.keys.collected, key)
+end
+
+function Player:playHurtSound()
+    self.sounds.hurt:clone():play()
+end
+
+function Player:takeDamage(damage)
+    Player:playHurtSound()
+    if self.lives - damage > 0 then
+        self.lives = self.lives - damage
+        HUD.score.value = HUD.score.value - 50
+    else
+        self.lives = 0
+    end
 end
 
 function Player:endContact(firstBody, secondBody, collision)
