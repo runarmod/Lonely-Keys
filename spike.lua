@@ -11,9 +11,6 @@ function Spike.new(x, y)
     local instance = setmetatable({}, Spike)
     instance.x = x
     instance.y = y
-    for key, value in pairs(instance) do
-        print(key, value)
-    end
     instance.physics = {}
     instance.physics.body = love.physics.newBody(World, instance.x + instance.width / 2, instance.y + instance.height / 2, "static")
     instance.physics.shape = love.physics.newRectangleShape(instance.width, instance.height)

@@ -23,7 +23,8 @@ end
 function Coin:remove()
     for i, instance in ipairs(ActiveCoins) do
         if instance == self then
-            Player:incrementCoins()
+            Player:incrementCoins(1)
+            Player:increaseScore(10)
             self.physics.body:destroy()
             table.remove(ActiveCoins, i)
         end

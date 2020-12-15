@@ -5,15 +5,16 @@ require("player")
 require("coin")
 require("key")
 require("spike")
+require("cloud")
 require("hud")
 require("introHelp")
 
 level = "intro"
 
 music = love.audio.newSource('music/music.wav', 'stream')
-    music:setLooping(true)
-    music:setVolume(0.01)
-    music:play()
+music:setLooping(true)
+music:setVolume(0.01)
+music:play()
 
 function love.load()
     Map = STI("map/" .. level .. ".lua", {"box2d"})
@@ -27,7 +28,7 @@ function love.load()
     love.graphics.setDefaultFilter("nearest", "nearest")
 
     -- the sky background
-    background = love.graphics.newImage("assets1/sky.png")
+    background = love.graphics.newImage("assets/bgBig.png")
 
     -- the mountain background
     mountains = {}
@@ -38,15 +39,17 @@ function love.load()
 
     showDeathScreen = false
 
-    font = {}
-    font.large = love.graphics.newFont("assets/upheavtt.ttf", 42)
-    font.small = love.graphics.newFont("assets/upheavtt.ttf", 21)
+    font = {
+        large = love.graphics.newFont("assets/upheavtt.ttf", 42),
+        small = love.graphics.newFont("assets/upheavtt.ttf", 21)
+    }
 
     Player:load()
 
     Coin.addAllCoinsAndRemovePrevious()
     Key.addAllKeysAndRemovePrevious()
     Spike.addAllSpikesAndRemovePrevious()
+    Cloud.addAllCloudsAndRemovePrevious()
 
     HUD:load()
 
@@ -63,6 +66,7 @@ function love.update(dt)
     Coin.updateAll(dt)
     Key.updateAll(dt)
     Spike.updateAll(dt)
+    Cloud.updateAll(dt)
     HUD:update(dt)
     IntroHelp:update(dt)
 
@@ -71,13 +75,6 @@ function love.update(dt)
 end
 
 function love.keypressed(key)
-    if showDeathScreen then
-        showDeathScreen = false
-        love.load()
-    end
-
-    Player:jump(key)
-
     for _, keyBind in ipairs(keybinds.quit) do
         if keyBind == key then
             love.event.quit()
@@ -87,8 +84,14 @@ function love.keypressed(key)
     for _, keyBind in ipairs(keybinds.reload) do
         if keyBind == key then
             love.load()
+            showDeathScreen = false
         end
     end
+
+    if showDeathScreen then return end
+
+    Player:jump(key)
+
 
     for _, keyBind in ipairs(keybinds.player1) do
         if key == keyBind then
@@ -133,6 +136,7 @@ function love.draw()
 
         love.graphics.translate(math.round(-Map.camX), math.round(-Map.camY))
         
+        Cloud.drawAll()
         Map:draw(-Map.camX, -Map.camY, 1, 1)
         drawDoors()
 
@@ -170,21 +174,13 @@ function drawDeathScreen()
     love.graphics.setFont(font.large)
     love.graphics.printf("You died!", 1920 / 2, 1080 / 2, 1920, "center", 0, 1, 1, 1920 / 2)
     love.graphics.setFont(font.small)
-    love.graphics.printf("Press any button to restart", 1920 / 2, 1080 / 2 + 100, 1920, "center", 0, 1, 1, 1920 / 2)
+    love.graphics.printf("Press " .. getKeybindsToActionAsString("reload") .. " to restart", 1920 / 2, 1080 / 2 + 100, 1920, "center", 0, 1, 1, 1920 / 2)
 end
 
 function changeLevel(localLevel)
     level = localLevel
     love.load()
 end
-
--- function restartLevel(fromDead)
---     fromDead = fromDead or false
---     if fromDead then
---         love.graphics.setColor(0, 0, 0, 1)
---     end
---     print(fromDead)
--- end
 
 function hideObjectLayers()
     for i, layer in ipairs(Map.layers) do
@@ -209,16 +205,15 @@ function loadDoorImages()
 end
 
 function beginContact(firstBody, secondBody, collision)
-	print("BEGIN CONTACT")
     if Coin.beginContact(firstBody, secondBody, collision) then return end
     if Key.beginContact(firstBody, secondBody, collision) then return end
     if Spike.beginContact(firstBody, secondBody, collision) then return end
+    if Cloud.beginContact(firstBody, secondBody, collision) then return end
     IntroHelp.beginContact(firstBody, secondBody, collision)
     Player:beginContact(firstBody, secondBody, collision)
 end
 
 function endContact(firstBody, secondBody, collision)
-	print("END CONTACT")
     Player:endContact(firstBody, secondBody, collision)
 end
 

@@ -38,6 +38,7 @@ function Player:load()
     self.currentJumps = 1
 
     self.coins = 0
+    self.totalCoins = #Map.layers.coins.objects
     self.score = {
         value = 1000,
         rate = 0.5,
@@ -284,15 +285,18 @@ function Player:checkDead(dt)
     if layerInMap("deadly", Map) then
         for i, rectangle in ipairs(Map.layers.deadly.objects) do
             if Player:inside(rectangle) then
-                self.sounds.dead:play()
-                showDeathScreen = true
+                Player:die()
             end
         end
     end
     if self.lives <= 0 then
-        self.sounds.dead:play()
-        showDeathScreen = true
+        Player:die()
     end
+end
+
+function Player:die()
+    self.sounds.dead:play()
+    showDeathScreen = true
 end
 
 function Player:checkIfAllKeysAreCollected()
@@ -317,7 +321,7 @@ function Player:checkFinished()
                 if level == "intro" then
                     changeLevel(1)
                 else
-                    changeLevel(level % 2 + 1)
+                    changeLevel(level % 4 + 1)
                 end
             end
         end
@@ -325,7 +329,6 @@ function Player:checkFinished()
 end
 
 function Player:beginContact(firstBody, secondBody, collision)
-    print(self.grounded)
     -- don't need to continue if we are already on the ground
     if self.grounded == true then
         return
@@ -374,8 +377,12 @@ function Player:jump(key)
     end
 end
 
-function Player:incrementCoins()
-    self.coins = self.coins + 10
+function Player:incrementCoins(amount)
+    self.coins = self.coins + amount
+end
+
+function Player:increaseScore(amount)
+    self.score.value = self.score.value + amount
 end
 
 function Player:addKey(key)
@@ -390,7 +397,7 @@ function Player:takeDamage(damage)
     Player:playHurtSound()
     if self.lives - damage > 0 then
         self.lives = self.lives - damage
-        HUD.score.value = HUD.score.value - 50
+        Player:increaseScore(-50)
     else
         self.lives = 0
     end

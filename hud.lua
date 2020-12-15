@@ -129,7 +129,7 @@ function HUD:drawCoin()
 end
 
 function HUD:drawCoinAmount()
-    local coinDisplayText = " : " .. Player.coins
+    local coinDisplayText = " : " .. Player.coins .. " / " .. Player.totalCoins
     love.graphics.setFont(font.large)
     love.graphics.setColor(0, 0, 0, 0.5)
     love.graphics.print(coinDisplayText, Map.camX + self.coin.x + self.shadowOffset + self.coin.width,
