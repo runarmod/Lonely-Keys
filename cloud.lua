@@ -6,7 +6,7 @@ function Cloud.new(x, y)
     local instance = setmetatable({}, Cloud)
     instance.x = x
     instance.y = y
-    instance.speed = math.random(100, 300)
+    instance.speed = math.random(50, 100)
     instance.img = love.graphics.newImage("assets/Items/cloud" .. math.random(1, 3) .. ".png")
     instance.width = instance.img:getWidth()
     instance.height = instance.img:getHeight()

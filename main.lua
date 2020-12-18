@@ -28,14 +28,19 @@ function love.load()
     love.graphics.setDefaultFilter("nearest", "nearest")
 
     -- the sky background
-    background = love.graphics.newImage("assets/bgBig.png")
+    background = love.graphics.newImage("assets/background.png")
 
     -- the mountain background
-    mountains = {}
-    mountains.one, mountains.two = {}, {}
-    mountains.one.image = love.graphics.newImage("assets1/Mountains_1.png")
-    mountains.two.image = love.graphics.newImage("assets1/Mountains_2.png")
-    mountains.one.position, mountains.two.position = 0, 0
+    -- mountains = {
+    --     one = {
+    --         image = love.graphics.newImage("assets1/Mountains_1.png"),
+    --         position = 0
+    --     },
+    --     two = {
+    --         image = love.graphics.newImage("assets1/Mountains_2.png"),
+    --         position = 0
+    --     }
+    -- }
 
     showDeathScreen = false
 
@@ -70,8 +75,8 @@ function love.update(dt)
     HUD:update(dt)
     IntroHelp:update(dt)
 
-    mountains.one.position = -(Map.camX * 0.25 - love.graphics.getWidth() / 4) % love.graphics.getWidth()
-    mountains.two.position = -(Map.camX * 0.5 - love.graphics.getWidth() / 4) % love.graphics.getWidth()
+    -- mountains.one.position = -(Map.camX * 0.25 - love.graphics.getWidth() / 4) % love.graphics.getWidth()
+    -- mountains.two.position = -(Map.camX * 0.5 - love.graphics.getWidth() / 4) % love.graphics.getWidth()
 end
 
 function love.keypressed(key)
@@ -126,24 +131,24 @@ function love.draw()
         drawDeathScreen()
     else
         -- draw the background with the sun
-        love.graphics.draw(background, 0, 0, 0, love.graphics.getHeight() / background:getHeight())
+        love.graphics.draw(background)
 
         -- draw the two mountain-backgrounds
-        for _, mountain in pairs(mountains) do
-            love.graphics.draw(mountain.image, mountain.position, 0, 0, love.graphics.getWidth() / mountain.image:getWidth(), love.graphics.getHeight() / mountain.image:getHeight())
-            love.graphics.draw(mountain.image, mountain.position - love.graphics.getWidth(), 0, 0, love.graphics.getWidth() / mountain.image:getWidth(), love.graphics.getHeight() / mountain.image:getHeight())
-        end
+        -- for _, mountain in pairs(mountains) do
+        --     love.graphics.draw(mountain.image, mountain.position, 0, 0, love.graphics.getWidth() / mountain.image:getWidth(), love.graphics.getHeight() / mountain.image:getHeight())
+        --     love.graphics.draw(mountain.image, mountain.position - love.graphics.getWidth(), 0, 0, love.graphics.getWidth() / mountain.image:getWidth(), love.graphics.getHeight() / mountain.image:getHeight())
+        -- end
 
         love.graphics.translate(math.round(-Map.camX), math.round(-Map.camY))
         
         Cloud.drawAll()
+        Spike.drawAll()
         Map:draw(-Map.camX, -Map.camY, 1, 1)
         drawDoors()
 
         Player:draw()
         Coin.drawAll()
         Key.drawAll()
-        Spike.drawAll()
         HUD:draw()
         IntroHelp:draw()
     end
