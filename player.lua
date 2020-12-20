@@ -1,3 +1,6 @@
+local scores = require("scores")
+
+
 Player = {}
 
 function Player:load()
@@ -318,6 +321,14 @@ function Player:checkFinished()
 
         for i, finishArea in ipairs(finishAreas) do
             if (self.allKeysCollected or finishArea.x < 200) and love.keyboard.isDown(keybinds.nextLevel) and Player:inside(finishArea) then
+                if self.score.value > levelHighscore then
+                    levelHighscore = self.score.value
+                    scores.levels["level" .. level].value = levelHighscore
+                    scores.levels["level" .. level].time = os.time()
+                end
+
+                saveHighscores()
+
                 if level == "intro" then
                     changeLevel(1)
                 else

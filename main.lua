@@ -1,5 +1,6 @@
 
 local STI = require("sti")
+local scores = require("scores")
 require("keybinds")
 require("player")
 require("coin")
@@ -17,6 +18,7 @@ music:setVolume(0.01)
 music:play()
 
 function love.load()
+    levelHighscore = scores.levels["level" .. level].value
     Map = STI("map/" .. level .. ".lua", {"box2d"})
     World = love.physics.newWorld(0, 0)
     World:setCallbacks(beginContact, endContact)
@@ -29,18 +31,6 @@ function love.load()
 
     -- the sky background
     background = love.graphics.newImage("assets/background.png")
-
-    -- the mountain background
-    -- mountains = {
-    --     one = {
-    --         image = love.graphics.newImage("assets1/Mountains_1.png"),
-    --         position = 0
-    --     },
-    --     two = {
-    --         image = love.graphics.newImage("assets1/Mountains_2.png"),
-    --         position = 0
-    --     }
-    -- }
 
     showDeathScreen = false
 
@@ -74,14 +64,12 @@ function love.update(dt)
     Cloud.updateAll(dt)
     HUD:update(dt)
     IntroHelp:update(dt)
-
-    -- mountains.one.position = -(Map.camX * 0.25 - love.graphics.getWidth() / 4) % love.graphics.getWidth()
-    -- mountains.two.position = -(Map.camX * 0.5 - love.graphics.getWidth() / 4) % love.graphics.getWidth()
 end
 
 function love.keypressed(key)
     for _, keyBind in ipairs(keybinds.quit) do
         if keyBind == key then
+            saveHighscores()
             love.event.quit()
         end
     end
@@ -96,7 +84,6 @@ function love.keypressed(key)
     if showDeathScreen then return end
 
     Player:jump(key)
-
 
     for _, keyBind in ipairs(keybinds.player1) do
         if key == keyBind then
@@ -132,12 +119,6 @@ function love.draw()
     else
         -- draw the background with the sun
         love.graphics.draw(background)
-
-        -- draw the two mountain-backgrounds
-        -- for _, mountain in pairs(mountains) do
-        --     love.graphics.draw(mountain.image, mountain.position, 0, 0, love.graphics.getWidth() / mountain.image:getWidth(), love.graphics.getHeight() / mountain.image:getHeight())
-        --     love.graphics.draw(mountain.image, mountain.position - love.graphics.getWidth(), 0, 0, love.graphics.getWidth() / mountain.image:getWidth(), love.graphics.getHeight() / mountain.image:getHeight())
-        -- end
 
         love.graphics.translate(math.round(-Map.camX), math.round(-Map.camY))
         
@@ -200,6 +181,54 @@ function layerInMap(layer, map)
         if locallayer.name == layer then return true end
     end
     return false
+end
+
+function saveHighscores()
+    local highscoresFile = io.open("scores.lua", "w")
+    highscoresFile:write("return " .. tostring(stringifyTable(scores)))
+    highscoresFile:close()
+end
+
+function stringifyTable(table, tabs)
+    local numElementInTable = 1
+    local tabs = tabs or 1
+    local tabsString = ""
+
+    -- indentation (number of tabs)
+    for i=1, tabs - 1 do
+        tabsString = tabsString .. "\t"
+    end
+
+    local tableString =  "{\n"
+
+    for key, value in pairs(table) do
+        tableString = tableString .. tabsString .. "\t" .. key .. " = "
+
+        -- if next element is a table, stringify that table
+        if type(value) == "table" then
+            tableString = tableString .. stringifyTable(value, tabs + 1)
+        else
+            -- else just add the value
+            tableString = tableString .. value
+        end
+        
+        -- if not last element in table, add a comma
+        if numElementInTable ~= lengthOfTable(table) then
+            tableString = tableString .. ",\n"
+        end
+
+        numElementInTable = numElementInTable + 1
+    end
+
+    return tableString .. "\n" .. tabsString .. "}"
+end
+
+function lengthOfTable(table)
+    local length = 0
+    for _, __ in pairs(table) do
+        length = length + 1
+    end
+    return length
 end
 
 function loadDoorImages()
