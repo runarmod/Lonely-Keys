@@ -24,7 +24,10 @@ function Player:load()
 
     self.dx = 0
     self.dy = 0
-    self.maxSpeed = 300
+    self.maxSpeed = {
+        walk = 300,
+        duck = 210
+    }
     self.acceleration = 3000
     self.friction = self.acceleration
     self.gravity = 3000
@@ -96,9 +99,7 @@ function Player:loadAssets()
     }
 
     for i = 1, self.animation.walk.total do
-        self.animation.walk.img[i] = love.graphics.newImage("assets/Player/p" .. self.character .. "_walk/PNG/p" ..
-                                                                self.character .. "_walk" .. string.format("%02d", i) ..
-                                                                ".png")
+        self.animation.walk.img[i] = love.graphics.newImage("assets/Player/p" .. self.character .. "_walk/PNG/p" .. self.character .. "_walk" .. string.format("%02d", i) .. ".png")
     end
 
     self.animation.idle = {
@@ -138,10 +139,8 @@ function Player:loadAssets()
 end
 
 function Player:update(dt)
-    -- update width and height of player
-    self.animation.width = self.animation.draw:getWidth()
-    self.animation.height = self.animation.draw:getHeight()
-
+    self:updateAnimationDimensions()
+    self:updateMaxSpeed()
     self:updateCamera()
     self:setState()
     self:setDirection()
@@ -154,6 +153,20 @@ function Player:update(dt)
     self:checkDead(dt)
     self:checkIfAllKeysAreCollected()
     self:checkFinished()
+end
+
+function Player:updateAnimationDimensions()
+    -- update width and height of player
+    self.animation.width = self.animation.draw:getWidth()
+    self.animation.height = self.animation.draw:getHeight()
+end
+
+function Player:updateMaxSpeed()
+    if self.state == "duck" then
+        self.maxSpeed.current = self.maxSpeed.duck
+    else
+        self.maxSpeed.current = self.maxSpeed.walk
+    end
 end
 
 function Player:updateCamera()
@@ -255,9 +268,9 @@ function Player:move(dt)
     end
 
     if left then
-        self.dx = math.max(-self.maxSpeed, self.dx - self.acceleration * dt)
+        self.dx = math.max(-self.maxSpeed.current, self.dx - self.acceleration * dt)
     elseif right then
-        self.dx = math.min(self.maxSpeed, self.dx + self.acceleration * dt)
+        self.dx = math.min(self.maxSpeed.current, self.dx + self.acceleration * dt)
     end
 end
 
@@ -289,10 +302,12 @@ function Player:checkDead(dt)
         for i, rectangle in ipairs(Map.layers.deadly.objects) do
             if Player:inside(rectangle) then
                 Player:die()
+                return
             end
         end
     end
-    if self.lives <= 0 then
+
+    if self.lives <= 0 or self.y > (Map.height + 1) * Map.tileheight then
         Player:die()
     end
 end
@@ -400,10 +415,6 @@ function Player:addKey(key)
     table.insert(self.keys.collected, key)
 end
 
-function Player:playHurtSound()
-    self.sounds.hurt:clone():play()
-end
-
 function Player:takeDamage(damage)
     Player:playHurtSound()
     if self.lives - damage > 0 then
@@ -412,6 +423,10 @@ function Player:takeDamage(damage)
     else
         self.lives = 0
     end
+end
+
+function Player:playHurtSound()
+    self.sounds.hurt:clone():play()
 end
 
 function Player:endContact(firstBody, secondBody, collision)

@@ -691,21 +691,7 @@ return {
       offsetx = 0,
       offsety = 0,
       properties = {},
-      objects = {
-        {
-          id = 87,
-          name = "",
-          type = "",
-          shape = "rectangle",
-          x = 840,
-          y = 2030,
-          width = 700,
-          height = 140,
-          rotation = 0,
-          visible = true,
-          properties = {}
-        }
-      }
+      objects = {}
     },
     {
       type = "objectgroup",
@@ -1122,38 +1108,12 @@ return {
           properties = {}
         },
         {
-          id = 123,
-          name = "",
-          type = "",
-          shape = "point",
-          x = 2152.5,
-          y = 280,
-          width = 0,
-          height = 0,
-          rotation = 0,
-          visible = true,
-          properties = {}
-        },
-        {
           id = 124,
           name = "",
           type = "",
           shape = "point",
           x = 735,
           y = 385,
-          width = 0,
-          height = 0,
-          rotation = 0,
-          visible = true,
-          properties = {}
-        },
-        {
-          id = 125,
-          name = "",
-          type = "",
-          shape = "point",
-          x = 1557.5,
-          y = 367.5,
           width = 0,
           height = 0,
           rotation = 0,
@@ -1193,19 +1153,6 @@ return {
           shape = "point",
           x = 2555,
           y = 385,
-          width = 0,
-          height = 0,
-          rotation = 0,
-          visible = true,
-          properties = {}
-        },
-        {
-          id = 129,
-          name = "",
-          type = "",
-          shape = "point",
-          x = 1190,
-          y = 927.5,
           width = 0,
           height = 0,
           rotation = 0,
