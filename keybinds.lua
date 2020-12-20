@@ -1,4 +1,4 @@
-keybinds = {
+local Keybinds = {
     nextLevel = {
         "e"
     },
@@ -38,3 +38,4 @@ keybinds = {
     }
 }
 
+return Keybinds

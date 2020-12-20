@@ -1,6 +1,8 @@
-Cloud = {}
+local Player = require("player")
+
+local Cloud = {}
 Cloud.__index = Cloud
-ActiveClouds = {}
+local ActiveClouds = {}
 
 function Cloud.new(x, y)
     local instance = setmetatable({}, Cloud)
@@ -66,3 +68,5 @@ function Cloud.beginContact(firstBody, secondBody, collision)
         end
     end
 end
+
+return Cloud

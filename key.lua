@@ -1,13 +1,15 @@
-keyImages = {}
-keyImages.keyYellow = love.graphics.newImage("assets/Items/keyYellow.png")
-keyImages.keyBlue = love.graphics.newImage("assets/Items/keyBlue.png")
-keyImages.keyGreen = love.graphics.newImage("assets/Items/keyGreen.png")
-keyImages.keyRed = love.graphics.newImage("assets/Items/keyRed.png")
+local Player = require("player")
 
-
-Key = {}
+local Key = {}
 Key.__index = Key
-ActiveKeys = {}
+local ActiveKeys = {}
+
+local keyImages = {
+    keyYellow = love.graphics.newImage("assets/Items/keyYellow.png"),
+    keyBlue = love.graphics.newImage("assets/Items/keyBlue.png"),
+    keyGreen = love.graphics.newImage("assets/Items/keyGreen.png"),
+    keyRed = love.graphics.newImage("assets/Items/keyRed.png")
+}
 
 function Key.new(key, x, y)
     local instance = setmetatable({}, Key)
@@ -97,3 +99,5 @@ function Key.beginContact(firstBody, secondBody, collision)
         end
     end
 end
+
+return Key

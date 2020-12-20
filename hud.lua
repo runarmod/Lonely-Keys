@@ -1,4 +1,6 @@
-HUD = {}
+local Player = require("player")
+
+local HUD = {}
 
 function HUD:load()
     self.shadowOffset = 3
@@ -233,3 +235,5 @@ function HUD:drawScore()
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.print(scoreDisplayText, Map.camX + self.score.x, Map.camY + self.score.y)
 end
+
+return HUD

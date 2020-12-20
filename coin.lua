@@ -1,6 +1,8 @@
-Coin = {}
+local Player = require("player")
+
+local Coin = {}
 Coin.__index = Coin
-ActiveCoins = {}
+local ActiveCoins = {}
 
 function Coin.new(x, y)
     local instance = setmetatable({}, Coin)
@@ -90,3 +92,5 @@ function Coin.beginContact(firstBody, secondBody, collision)
         end
     end
 end
+
+return Coin

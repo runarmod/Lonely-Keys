@@ -1,24 +1,24 @@
 return {
-	levels = {
-		level2 = {
-			value = 935,
-			time = 1608430036
-		},
-		level1 = {
-			value = 1045,
-			time = 1608429973
-		},
-		level4 = {
-			value = 999,
-			time = 1608430081
-		},
-		level3 = {
-			value = 863,
-			time = 1608430080
-		},
-		levelintro = {
-			value = 999,
-			time = 1608429924
-		}
-	}
+    levels = {
+        level2 = {
+            time = 1608483832,
+            value = 940
+        },
+        level1 = {
+            time = 1608484972,
+            value = 1049
+        },
+        level4 = {
+            time = 1608430081,
+            value = 999
+        },
+        level3 = {
+            time = 1608482910,
+            value = 968
+        },
+        levelintro = {
+            time = 1608486730,
+            value = 1036
+        }
+    }
 }

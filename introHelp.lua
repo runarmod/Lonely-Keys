@@ -1,8 +1,11 @@
-IntroHelp = {}
+local Keybinds = require("keybinds")
+local Player = require("player")
+
+local IntroHelp = {}
+local headBlocks = {{}, {}, {}}
 
 function IntroHelp:load()
     if level == "intro" then
-        headBlocks = {{}, {}, {}}
         for i, object in ipairs(Map.layers.playerHeads.objects) do
             headBlocks[i].physics = {}
             headBlocks[i].physics.body = love.physics.newBody(World, object.x + object.width / 2, object.y + object.height / 2, "static")
@@ -50,7 +53,7 @@ function IntroHelp:load()
 
         self.chooseCharacter = {}
         self.chooseCharacter.choose = "Choose character"
-        self.chooseCharacter.change = "You can always change character by pressing one of " .. keybinds.player1[1] .. ", " .. keybinds.player2[1] .. " or " .. keybinds.player3[1]
+        self.chooseCharacter.change = "You can always change character by pressing one of " .. Keybinds.player1[1] .. ", " .. Keybinds.player2[1] .. " or " .. Keybinds.player3[1]
         for _, object in ipairs(Map.layers.playerHeads.objects) do
             if object.name == "2" then
                 self.chooseCharacter.x = object.x + object.width / 2
@@ -90,7 +93,7 @@ function IntroHelp:load()
         self.collectingKeys.wrap = 400
 
         self.pressE = {}
-        self.pressE.text = "Press " .. keybinds.nextLevel[1] .. " to go to the next level when in front of a door"
+        self.pressE.text = "Press " .. Keybinds.nextLevel[1] .. " to go to the next level when in front of a door"
         for i, object in pairs(Map.layers.startEnd.objects) do
             if object.name == "end" then
                 if not self.pressE.x then
@@ -185,20 +188,4 @@ function IntroHelp.beginContact(firstBody, secondBody, collision)
     end
 end
 
-
-function getKeybindsToActionAsString(action)
-    local keys = ""
-    local numberOfKeysToAction = #keybinds[action]
-
-    for i, key in ipairs(keybinds[action]) do
-        local separator = ", "
-        if i == numberOfKeysToAction then
-            separator = ""
-        elseif i == numberOfKeysToAction - 1 then
-            separator = " or "
-        end
-        keys = keys .. key .. separator
-    end
-    
-    return keys
-end
+return IntroHelp
