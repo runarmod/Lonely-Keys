@@ -241,21 +241,7 @@ return {
       offsetx = 0,
       offsety = 0,
       properties = {},
-      objects = {
-        {
-          id = 41,
-          name = "",
-          type = "",
-          shape = "rectangle",
-          x = 0,
-          y = 770,
-          width = 70,
-          height = 140,
-          rotation = 0,
-          visible = true,
-          properties = {}
-        }
-      }
+      objects = {}
     },
     {
       type = "objectgroup",
@@ -284,7 +270,7 @@ return {
         {
           id = 39,
           name = "end",
-          type = "",
+          type = "open",
           shape = "rectangle",
           x = 140,
           y = 805,

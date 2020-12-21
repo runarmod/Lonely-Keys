@@ -1,11 +1,6 @@
 local scores = require("scores")
 local Keybinds = require("keybinds")
 
-function changeLevel(localLevel)
-    level = localLevel
-    love.load()
-end
-
 function hideObjectLayers()
     for i, layer in ipairs(Map.layers) do
         if layer.type == "objectgroup" then

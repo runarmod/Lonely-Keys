@@ -11,34 +11,45 @@ local Cloud = require("cloud")
 local HUD = require("hud")
 local IntroHelp = require("introHelp")
 
-level = "intro"
-
 music = love.audio.newSource('music/music.wav', 'stream')
 music:setLooping(true)
 music:setVolume(0.01)
 music:play()
 
 function love.load()
-    levelHighscore = scores.levels["level" .. level].value
-    Map = STI("map/" .. level .. ".lua", {"box2d"})
-    World = love.physics.newWorld(0, 0)
-    World:setCallbacks(beginContact, endContact)
-    Map:box2d_init(World)
-
-    hideObjectLayers()
-
     -- prevent anti-aliasing
     love.graphics.setDefaultFilter("nearest", "nearest")
-
+    
     -- the sky background
     background = love.graphics.newImage("assets/background.png")
-
-    showDeathScreen = false
-
+    
     font = {
         large = love.graphics.newFont("assets/upheavtt.ttf", 42),
         small = love.graphics.newFont("assets/upheavtt.ttf", 21)
     }
+
+    hardRestart("intro")
+end
+
+function hardRestart(lvl)
+    lvl = lvl or 1
+    playthroughScores = {}
+    playthroughHighscore = false
+    win = false
+    restart(lvl)
+end
+
+function restart(lvl)
+    level = lvl or level or 1
+    currentLevelHighscore = scores.levels["level" .. level].value
+    Map = STI("map/" .. level .. ".lua", {"box2d"})
+    World = love.physics.newWorld(0, 0)
+    World:setCallbacks(beginContact, endContact)
+    Map:box2d_init(World)
+    
+    hideObjectLayers()
+
+    showDeathScreen = false
 
     Player:load()
 
@@ -54,8 +65,11 @@ function love.load()
     loadDoorImages()
 end
 
+
 function love.update(dt)
-    if showDeathScreen then return end
+    print(stringifyTable(playthroughScores))
+    print(stringifyTable(scores))
+    if showDeathScreen or win then return end
     World:update(dt)
     Map:update(dt)
     Player:update(dt)
@@ -77,8 +91,13 @@ function love.keypressed(key)
 
     for _, keyBind in ipairs(Keybinds.reload) do
         if keyBind == key then
-            love.load()
+            if win then
+                hardRestart()
+            else
+                restart()
+            end
             showDeathScreen = false
+            win = false
         end
     end
 
@@ -101,6 +120,8 @@ end
 function love.draw()
     if showDeathScreen then
         drawDeathScreen()
+    elseif win then
+        drawWinScreen()
     else
         -- draw the background with the sun
         love.graphics.draw(background)
@@ -131,7 +152,7 @@ function drawDoors()
 
     for i, object in ipairs(Map.layers.startEnd.objects) do
         if object.name == "end" then
-            if object.x > 200 then
+            if object.type ~= "open" then
                 love.graphics.draw(topDoor, object.x, object.y - 35)
                 love.graphics.draw(midDoor, object.x, object.y + 35)
             end
@@ -146,6 +167,23 @@ function drawDeathScreen()
     love.graphics.printf("You died!", 1920 / 2, 1080 / 2, 1920, "center", 0, 1, 1, 1920 / 2)
     love.graphics.setFont(font.small)
     love.graphics.printf("Press " .. getKeybindsToActionAsString("reload") .. " to restart", 1920 / 2, 1080 / 2 + 100, 1920, "center", 0, 1, 1, 1920 / 2)
+end
+
+function drawWinScreen()
+    love.graphics.setBackgroundColor(0, 0, 0, 1)
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.setFont(font.large)
+    love.graphics.printf("YOU WON! Congratulations!", 1920 / 2, 1080 / 2 - 100, 1920, "center", 0, 1, 1, 1920 / 2)
+    
+    if playthroughHighscore then
+        love.graphics.printf("You got a new playthrough highscore of " .. playthroughScores.total, 1920 / 2, 1080 / 2, 1920, "center", 0, 1, 1, 1920 / 2)
+        love.graphics.setFont(font.small)
+    else
+        love.graphics.setFont(font.small)
+        love.graphics.printf("You got a playthrough score of " .. playthroughScores.total, 1920 / 2, 1080 / 2, 1920, "center", 0, 1, 1, 1920 / 2)
+        love.graphics.printf("Playthrough highscore is " .. scores.total.value, 1920 / 2, 1080 / 2 + 50, 1920, "center", 0, 1, 1, 1920 / 2)
+    end
+    love.graphics.printf("Press " .. getKeybindsToActionAsString("reload") .. " to restart", 1920 / 2, 1080 / 2 + 200, 1920, "center", 0, 1, 1, 1920 / 2)
 end
 
 function loadDoorImages()

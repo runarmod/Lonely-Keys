@@ -227,7 +227,7 @@ function HUD:drawEmptyLives()
 end
 
 function HUD:drawScore()
-    local scoreDisplayText = string.format("Score: %.0f\nHighscore: %.0f", self.score.value, levelHighscore)
+    local scoreDisplayText = string.format("Score: %.0f\nHighscore: %.0f", self.score.value, currentLevelHighscore)
     love.graphics.setFont(font.large)
     love.graphics.setColor(0, 0, 0, 0.5)
     love.graphics.print(scoreDisplayText, Map.camX + self.score.x + self.shadowOffset,

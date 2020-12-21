@@ -90,12 +90,10 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="13" name="deadly">
-  <object id="41" x="0" y="770" width="70" height="140"/>
- </objectgroup>
+ <objectgroup id="13" name="deadly"/>
  <objectgroup id="3" name="startEnd">
   <object id="8" name="end" x="3640" y="805" width="70" height="105"/>
-  <object id="39" name="end" x="140" y="805" width="70" height="105"/>
+  <object id="39" name="end" type="open" x="140" y="805" width="70" height="105"/>
   <object id="40" name="start" x="175" y="560">
    <point/>
   </object>

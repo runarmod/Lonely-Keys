@@ -335,19 +335,44 @@ function Player:checkFinished()
         end
 
         for i, finishArea in ipairs(finishAreas) do
-            if (self.allKeysCollected or finishArea.x < 200) and love.keyboard.isDown(Keybinds.nextLevel) and Player:inside(finishArea) then
-                if self.score.value > levelHighscore then
-                    levelHighscore = self.score.value
-                    scores.levels["level" .. level].value = levelHighscore
+            if (self.allKeysCollected or finishArea.type == "open") and love.keyboard.isDown(Keybinds.nextLevel) and Player:inside(finishArea) then
+                if self.score.value > currentLevelHighscore then
+                    currentLevelHighscore = self.score.value
+                    scores.levels["level" .. level].value = currentLevelHighscore
                     scores.levels["level" .. level].time = os.time()
                 end
 
+                
+                if level ~= "intro" then
+                    playthroughScores["level" .. level] = self.score.value
+                    print(stringifyTable(playthroughScores))
+                end
+
+                if level == 4 then
+                    local total = 0
+                    for lvl, score in pairs(playthroughScores) do
+                        total = total + score
+                    end
+
+
+                    playthroughScores["total"] = total
+                    print(stringifyTable(playthroughScores))
+
+                    if playthroughScores["total"] > scores.total.value then
+                        playthroughHighscore = true
+                        scores.total.value = playthroughScores.total
+                        scores.total.time = os.time()
+                    end
+                end
+                
                 saveHighscores()
 
                 if level == "intro" then
-                    changeLevel(1)
+                    restart(1)
+                elseif level == 4 then
+                    win = true
                 else
-                    changeLevel(level % 4 + 1)
+                    restart(level + 1)
                 end
             end
         end
