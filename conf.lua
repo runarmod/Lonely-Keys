@@ -6,6 +6,6 @@ function love.conf(t)
     t.window.height = 1080
     t.window.vsync = 0
     t.modules.joystick = false
-    t.window.icon = "assets/Tiles/grass.png"
+    t.window.icon = "assets/icon.png"
     t.window.fullscreen = true
 end
