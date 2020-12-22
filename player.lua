@@ -345,7 +345,6 @@ function Player:checkFinished()
                 
                 if level ~= "intro" then
                     playthroughScores["level" .. level] = self.score.value
-                    print(stringifyTable(playthroughScores))
                 end
 
                 if level == 4 then
@@ -356,7 +355,6 @@ function Player:checkFinished()
 
 
                     playthroughScores["total"] = total
-                    print(stringifyTable(playthroughScores))
 
                     if playthroughScores["total"] > scores.total.value then
                         playthroughHighscore = true

@@ -67,8 +67,6 @@ end
 
 
 function love.update(dt)
-    print(stringifyTable(playthroughScores))
-    print(stringifyTable(scores))
     if showDeathScreen or win then return end
     World:update(dt)
     Map:update(dt)
