@@ -1,28 +1,28 @@
 return {
     levels = {
         level2 = {
-            value = 1008,
-            time = 1608584694
+            time = 1608584694,
+            value = 1008
         },
         level1 = {
-            value = 1010,
-            time = 1608584672
+            time = 1608584672,
+            value = 1010
         },
         level4 = {
-            value = 999,
-            time = 1608584633
+            time = 1608584633,
+            value = 999
         },
         level3 = {
-            value = 1000,
-            time = 1608584616
+            time = 1608584616,
+            value = 1000
         },
         levelintro = {
-            value = 1047,
-            time = 1608656473
+            time = 1608656473,
+            value = 1047
         }
     },
     total = {
-        value = 3998,
-        time = 1608657627
+        time = 1608657627,
+        value = 3998
     }
 }

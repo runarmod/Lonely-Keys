@@ -52,15 +52,15 @@ function restart(lvl)
     showDeathScreen = false
 
     Player:load()
-
     Coin.addAllCoinsAndRemovePrevious()
     Key.addAllKeysAndRemovePrevious()
     Spike.addAllSpikesAndRemovePrevious()
     Cloud.addAllCloudsAndRemovePrevious()
-
     HUD:load()
 
-    IntroHelp:load()
+    if level == "intro" then
+        IntroHelp:load()
+    end
 
     loadDoorImages()
 end
@@ -78,7 +78,10 @@ function love.update(dt)
     Spike.updateAll(dt)
     Cloud.updateAll(dt)
     HUD:update(dt)
-    IntroHelp:update(dt)
+
+    if level == "intro" then
+        IntroHelp:update(dt)
+    end
 end
 
 function love.keypressed(key)
@@ -137,7 +140,9 @@ function love.draw()
         Coin.drawAll()
         Key.drawAll()
         HUD:draw()
-        IntroHelp:draw()
+        if level == "intro" then
+            IntroHelp:draw()
+        end
     end
 end
 
@@ -198,7 +203,7 @@ function beginContact(firstBody, secondBody, collision)
     if Key.beginContact(firstBody, secondBody, collision) then return end
     if Spike.beginContact(firstBody, secondBody, collision) then return end
     if Cloud.beginContact(firstBody, secondBody, collision) then return end
-    IntroHelp.beginContact(firstBody, secondBody, collision)
+    if level == "intro" then IntroHelp.beginContact(firstBody, secondBody, collision) end
     Player:beginContact(firstBody, secondBody, collision)
 end
 
