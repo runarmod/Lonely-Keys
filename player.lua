@@ -99,7 +99,7 @@ function Player:loadAssets()
     }
 
     for i = 1, self.animation.walk.total do
-        self.animation.walk.img[i] = love.graphics.newImage("assets/Player/p" .. self.character .. "_walk/PNG/p" .. self.character .. "_walk" .. string.format("%02d", i) .. ".png")
+        self.animation.walk.img[i] = love.graphics.newImage("assets/Player/p" .. self.character .. "_walk/p" .. self.character .. "_walk" .. string.format("%02d", i) .. ".png")
     end
 
     self.animation.idle = {

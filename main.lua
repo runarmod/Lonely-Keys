@@ -11,7 +11,7 @@ local Cloud = require("cloud")
 local HUD = require("hud")
 local IntroHelp = require("introHelp")
 
-music = love.audio.newSource('music/music.wav', 'stream')
+music = love.audio.newSource('music/music.mp3', 'stream')
 music:setLooping(true)
 music:setVolume(0.01)
 music:play()
@@ -186,7 +186,7 @@ function drawWinScreen()
     else
         love.graphics.setFont(font.small)
         love.graphics.printf("You got a score of " .. playthroughScores.total, 1920 / 2, 1080 / 2, 1920, "center", 0, 1, 1, 1920 / 2)
-        love.graphics.printf("Highscore is " .. scores.total.value .. os.date("\ncompleted %H. %b %y %X", scores.total.time), 1920 / 2, 1080 / 2 + 50, 1920, "center", 0, 1, 1, 1920 / 2)
+        love.graphics.printf("Highscore is " .. scores.total.value .. os.date("\ncompleted %d. %b %y %X", scores.total.time), 1920 / 2, 1080 / 2 + 50, 1920, "center", 0, 1, 1, 1920 / 2)
     end
     love.graphics.printf("Press " .. getKeybindsToActionAsString("reload") .. " to restart", 1920 / 2, 1080 / 2 + 200, 1920, "center", 0, 1, 1, 1920 / 2)
 end
