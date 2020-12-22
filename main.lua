@@ -180,8 +180,8 @@ function drawWinScreen()
         love.graphics.setFont(font.small)
     else
         love.graphics.setFont(font.small)
-        love.graphics.printf("You got a playthrough score of " .. playthroughScores.total, 1920 / 2, 1080 / 2, 1920, "center", 0, 1, 1, 1920 / 2)
-        love.graphics.printf("Playthrough highscore is " .. scores.total.value, 1920 / 2, 1080 / 2 + 50, 1920, "center", 0, 1, 1, 1920 / 2)
+        love.graphics.printf("You got a score of " .. playthroughScores.total, 1920 / 2, 1080 / 2, 1920, "center", 0, 1, 1, 1920 / 2)
+        love.graphics.printf("Highscore is " .. scores.total.value .. os.date("\ncompleted %H. %b %y %X", scores.total.time), 1920 / 2, 1080 / 2 + 50, 1920, "center", 0, 1, 1, 1920 / 2)
     end
     love.graphics.printf("Press " .. getKeybindsToActionAsString("reload") .. " to restart", 1920 / 2, 1080 / 2 + 200, 1920, "center", 0, 1, 1, 1920 / 2)
 end

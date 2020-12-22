@@ -17,23 +17,20 @@ function IntroHelp:load()
 
         self.keybinds = {}
         self.keybinds.title = "General keybinds:"
-        self.keybinds.text = {}
-        self.keybinds.text.right = "Right: " .. getKeybindsToActionAsString("right")
-        self.keybinds.text.left = "Left: " .. getKeybindsToActionAsString("left")
-        self.keybinds.text.jump = "Jump: " .. getKeybindsToActionAsString("jump")
-        self.keybinds.text.duck = "Duck: " .. getKeybindsToActionAsString("duck")
-        self.keybinds.text.restart = "Restart level: " .. getKeybindsToActionAsString("reload")
-        self.keybinds.text.quit = "Quit: " .. getKeybindsToActionAsString("quit")
-        self.keybinds.text.nextLevel = "Next level: " .. getKeybindsToActionAsString("nextLevel")
+        self.keybinds.text = {
+            "Right: " .. getKeybindsToActionAsString("right"),
+            "Left: " .. getKeybindsToActionAsString("left"),
+            "Jump: " .. getKeybindsToActionAsString("jump"),
+            "Duck: " .. getKeybindsToActionAsString("duck"),
+            "Restart level: " .. getKeybindsToActionAsString("reload"),
+            "Quit: " .. getKeybindsToActionAsString("quit"),
+            "Next level: " .. getKeybindsToActionAsString("nextLevel")
+        }
         self.keybinds.x = 200
         self.keybinds.height = font.large:getHeight(self.keybinds.title) / 1.3
         self.keybinds.width = font.large:getWidth(self.keybinds.title)
         self.keybinds.wrap = self.keybinds.width
 
-        self.wastingTime = {}
-        self.wastingTime.text = "The longer time you use, the lower score you get"
-        self.wastingTime.x = Map.layers.time.objects[1].x
-        self.wastingTime.wrap = 380
         
         self.earlyExit = {}
         self.earlyExit.text = "Skip tutorial"
@@ -50,7 +47,7 @@ function IntroHelp:load()
             end
         end
         self.earlyExit.wrap = 200
-
+        
         self.chooseCharacter = {}
         self.chooseCharacter.choose = "Choose character"
         self.chooseCharacter.change = "You can always change character by pressing one of " .. Keybinds.player1[1] .. ", " .. Keybinds.player2[1] .. " or " .. Keybinds.player3[1]
@@ -62,30 +59,24 @@ function IntroHelp:load()
         end
         self.chooseCharacter.wrap = 400
 
+        self.wastingTime = {}
+        self.wastingTime.text = "The longer time you use, the lower score you get"
+        self.wastingTime.x = Map.layers.time.objects[1].x
+        self.wastingTime.wrap = 380
+        
         self.collectingCoins = {}
         self.collectingCoins.text = "Collecting coins earns you a higher score"
-        local minXCoin = Map.layers.coins.objects[1].x
-        local maxXCoin = minXCoin
-        local minYCoin = Map.layers.coins.objects[1].y
-        for _, object in ipairs(Map.layers.coins.objects) do
-            if object.x > maxXCoin then
-                maxXCoin = object.x
-            end
-            if object.x < minXCoin then
-                minXCoin = object.x
-            end
-            if object.y < minYCoin then
-                minYCoin = object.y
-            end
-        end
-        self.collectingCoins.x = minXCoin + (maxXCoin - minXCoin) / 2
+        self.collectingCoins.x = Map.layers.coinsText.objects[1].x
         self.collectingCoins.wrap = 400
 
-        self.duck = {}
-        self.duck.keys = getKeybindsToActionAsString("duck")
+        self.duck = {
+            keys = getKeybindsToActionAsString("duck"),
+            x = Map.layers.duck.objects[1].x,
+            wrap = 400
+        }
         self.duck.text = "You can duck under tight spaces with " .. self.duck.keys
-        self.duck.x = Map.layers.duck.objects[1].x
-        self.duck.wrap = 400
+
+        self.secret = "Maybe you'll even find some secrets"
 
         self.collectingKeys = {}
         self.collectingKeys.text = "Collect all the keys to unlock the door to the next level"
@@ -122,6 +113,7 @@ function IntroHelp:draw()
         IntroHelp:drawCollectingCoins()
         IntroHelp:drawWastingTime()
         IntroHelp:drawDuck()
+        IntroHelp:drawSecret()
         IntroHelp:drawCollectingKeys()
         IntroHelp:drawPressE()
     end
@@ -132,7 +124,7 @@ function IntroHelp:drawKeybinds()
     love.graphics.printf(self.keybinds.title, self.keybinds.x, self.yLevelInfo, self.keybinds.wrap, "center")
     love.graphics.setFont(font.small)
     local i = 1
-    for action, keyBindText in pairs(self.keybinds.text) do
+    for i, keyBindText in ipairs(self.keybinds.text) do
         love.graphics.printf(keyBindText, self.keybinds.x, self.yLevelInfo + self.keybinds.height * i + 10, self.keybinds.wrap, "center")
         i = i + 1
     end
@@ -162,7 +154,12 @@ end
 
 function IntroHelp:drawDuck()
     love.graphics.setFont(font.large)
-    love.graphics.printf(self.duck.text, self.duck.x, self.yLevelInfo, self.duck.wrap, "center", 0, 1, 1, self.duck.wrap / 2)
+    love.graphics.printf(self.duck.text, self.duck.x, self.yLevelInfo - 100, self.duck.wrap, "center", 0, 1, 1, self.duck.wrap / 2)
+end
+
+function IntroHelp:drawSecret()
+    love.graphics.setFont(font.large)
+    love.graphics.printf(self.secret, self.duck.x, Map.height * Map.tileheight - 150, self.duck.wrap, "center", 0, 1, 1, self.duck.wrap / 2)
 end
 
 function IntroHelp:drawCollectingKeys()
