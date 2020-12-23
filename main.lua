@@ -14,7 +14,7 @@ local IntroHelp = require("introHelp")
 
 music = love.audio.newSource('music/music.mp3', 'stream')
 music:setLooping(true)
-music:setVolume(0.01)
+music:setVolume(0.03)
 music:play()
 
 function love.load()
