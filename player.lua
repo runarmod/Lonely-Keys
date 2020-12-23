@@ -1,4 +1,3 @@
-local scores = require("scores")
 local Keybinds = require("keybinds")
 
 local Player = {}

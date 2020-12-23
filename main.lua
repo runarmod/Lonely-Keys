@@ -1,8 +1,8 @@
 
 local STI = require("sti")
-require("util")
-local scores = require("scores")
 local Keybinds = require("keybinds")
+require("util")
+scores = getScores()
 local Player = require("player")
 local Coin = require("coin")
 local Key = require("key")
@@ -10,6 +10,7 @@ local Spike = require("spike")
 local Cloud = require("cloud")
 local HUD = require("hud")
 local IntroHelp = require("introHelp")
+
 
 music = love.audio.newSource('music/music.mp3', 'stream')
 music:setLooping(true)

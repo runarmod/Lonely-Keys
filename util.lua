@@ -1,5 +1,51 @@
-local scores = require("scores")
 local Keybinds = require("keybinds")
+
+function split(str, sep)
+    local str = str or ""
+    local s = ""
+    local mathces = {}
+    for i=1, #str do
+        local c = str:sub(i,i)
+        if c == sep then
+            table.insert(mathces, s)
+            s = ""
+        else
+            s = s .. c
+        end
+    end
+    table.insert(mathces, s)
+    return mathces
+end
+
+function getScores()
+    local file = io.open("scores.txt", "r")
+    local score = {levels = {}, total = {}}
+    local lvl = ""
+
+    for line in file:lines() do
+        if line == "" then break end
+        if not string.find(line, "time") and not string.find(line, "value")then
+            lvl = line
+            if line ~= "total" then
+                score.levels[lvl] = {}
+            end
+        elseif string.find(line, "time") then
+            if lvl == "total" then
+                score.total.time = tonumber(split(line, "=")[2])
+            else
+                score.levels[lvl].time = tonumber(split(line, "=")[2])
+            end
+        elseif string.find(line, "value") then
+            if lvl == "total" then
+                score.total.value = tonumber(split(line, "=")[2])
+            else
+                score.levels[lvl].value = tonumber(split(line, "=")[2])
+            end
+        end
+    end
+
+    return score
+end
 
 function hideObjectLayers()
     for i, layer in ipairs(Map.layers) do
@@ -17,52 +63,27 @@ function layerInMap(layer)
 end
 
 function saveHighscores()
-    local highscoresFile = io.open("scores.lua", "w")
-    highscoresFile:write("return " .. tostring(stringifyTable(scores)))
+    local highscoresFile = io.open("scores.txt", "w")
+    highscoresFile:write(lineifyTable(scores.levels) .. "total\n" .. lineifyTable(scores.total))
     highscoresFile:close()
 end
 
-function stringifyTable(table, tabs)
-    local numElementInTable = 1
-    local tabs = tabs or 1
-    local tabsString = ""
-    local tab = "    "
-
-    -- indentation (number of tabs)
-    for i=1, tabs - 1 do
-        tabsString = tabsString .. tab
-    end
-
-    local tableString =  "{\n"
-
+function lineifyTable(table)
+    local tableString =  ""
+    
     for key, value in pairs(table) do
-        tableString = tableString .. tabsString .. tab .. key .. " = "
-
+        tableString = tableString .. key
+        
         -- if next element is a table, stringify that table
         if type(value) == "table" then
-            tableString = tableString .. stringifyTable(value, tabs + 1)
+            tableString = tableString .. "\n" .. lineifyTable(value)
         else
             -- else just add the value
-            tableString = tableString .. value
+            tableString = tableString .. "=" .. value .. "\n"
         end
-        
-        -- if not last element in table, add a comma
-        if numElementInTable ~= lengthOfTable(table) then
-            tableString = tableString .. ",\n"
-        end
-
-        numElementInTable = numElementInTable + 1
     end
 
-    return tableString .. "\n" .. tabsString .. "}"
-end
-
-function lengthOfTable(table)
-    local length = 0
-    for _, __ in pairs(table) do
-        length = length + 1
-    end
-    return length
+    return tableString
 end
 
 function getKeybindsToActionAsString(action)
